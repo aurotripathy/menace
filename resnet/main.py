@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
-from resnet_18 import BasicBlock, Bottleneck, ResNet
+from resnet import BasicBlock, BottleneckBlock, ResNet
 import torch.utils.model_zoo as model_zoo
 from pudb import set_trace
     
@@ -107,7 +107,7 @@ def main():
         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
     # Define a Convolutional Neural Network
-    model = ResNet(Bottleneck, [3, 4, 6, 3], 10, True).to(device)
+    model = ResNet(BottleneckBlock, [3, 4, 6, 3], 10, True).to(device)
 
     # Define a loss function
     criterion = nn.CrossEntropyLoss()
@@ -117,9 +117,6 @@ def main():
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, criterion, epoch)
         test(args, model, device, test_loader)
-
-    # Test the network on the test data
-    # ??
 
     if (args.save_model):
         torch.save(model.state_dict(),"mnist_cnn.pt")
