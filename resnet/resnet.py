@@ -12,22 +12,28 @@ conv1          7X7, 64, stride 2
                | 3X3, 64|   |
 conv2_x        | 3X3, 64|   | X 2
                +--    --+   |
+                   +<--------
+---------------------------------
                    +---------
+               +--     --+  |
+               | 3X3, 128|  |
+conv3_x        | 3X3, 128|  | X 2
+               +--     --+  |
+                   +<--------
 ---------------------------------
-               +--     --+
-               | 3X3, 128|
-conv3_x        | 3X3, 128| X 2
-               +--     --+
+                   +---------
+               +--     --+  |
+               | 3X3, 256|  |
+conv4_x        | 3X3, 256|  | X 2
+               +--     --+  |
+                   +<--------
 ---------------------------------
-               +--     --+
-               | 3X3, 256|
-conv4_x        | 3X3, 256| X 2
-               +--     --+
----------------------------------
-               +--     --+
-               | 3X3, 512|
-conv5_x        | 3X3, 512| X 2
-               +--     --+
+                   +---------
+               +--     --+  |
+               | 3X3, 512|  |
+conv5_x        | 3X3, 512|  | X 2
+               +--     --+  |
+                   +<--------
 ---------------------------------
                avg pool, 1000-d, fc 
                + softmax
@@ -168,7 +174,7 @@ class BottleneckBlock(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, num_classes=10, zero_init_residual=False):
+    def __init__(self, block, stacked_blocks, num_classes=10, zero_init_residual=False):
         super(ResNet, self).__init__()
         self.inplanes = 64
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
@@ -176,10 +182,10 @@ class ResNet(nn.Module):
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.layer1 = self._make_layer(block, 64, layers[0])
-        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
-        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+        self.layer1 = self._make_layer(block, 64, stacked_blocks[0])
+        self.layer2 = self._make_layer(block, 128, stacked_blocks[1], stride=2)
+        self.layer3 = self._make_layer(block, 256, stacked_blocks[2], stride=2)
+        self.layer4 = self._make_layer(block, 512, stacked_blocks[3], stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
@@ -208,13 +214,13 @@ class ResNet(nn.Module):
                 nn.BatchNorm2d(planes * block.expansion),
             )
 
-        layers = []
-        layers.append(block(self.inplanes, planes, stride, downsample))
+        stacked_blocks = []
+        stacked_blocks.append(block(self.inplanes, planes, stride, downsample))
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
-            layers.append(block(self.inplanes, planes))
+            stacked_blocks.append(block(self.inplanes, planes))
 
-        return nn.Sequential(*layers)
+        return nn.Sequential(*stacked_blocks)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -235,14 +241,4 @@ class ResNet(nn.Module):
 
 
 
-def resnet18(pretrained=False, **kwargs):
-    """Constructs a ResNet-18 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet18']))
-    return model
 
