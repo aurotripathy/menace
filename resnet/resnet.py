@@ -8,31 +8,31 @@ conv1          7X7, 64, stride 2
                3X3 max pool, stride 2
                -----------------
                    +---------
-               +--    --+   |  
+               ---    ---   |  
                | 3X3, 64|   |
 conv2_x        | 3X3, 64|   | X 2
-               +--    --+   |
+               ---    ---   |
                    +<--------
 ---------------------------------
                    +---------
-               +--     --+  |
+               ---     ---  |
                | 3X3, 128|  |
 conv3_x        | 3X3, 128|  | X 2
-               +--     --+  |
+               ---     ---  |
                    +<--------
 ---------------------------------
                    +---------
-               +--     --+  |
+               ---     ---  |
                | 3X3, 256|  |
 conv4_x        | 3X3, 256|  | X 2
-               +--     --+  |
+               +--     ---  |
                    +<--------
 ---------------------------------
                    +---------
-               +--     --+  |
+               ---     ---  |
                | 3X3, 512|  |
 conv5_x        | 3X3, 512|  | X 2
-               +--     --+  |
+               ---     ---  |
                    +<--------
 ---------------------------------
                avg pool, 1000-d, fc 
@@ -189,12 +189,12 @@ class ResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            elif isinstance(m, nn.BatchNorm2d):
-                nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.bias, 0)
+        # for m in self.modules():
+        #     if isinstance(m, nn.Conv2d):
+        #         nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+        #     elif isinstance(m, nn.BatchNorm2d):
+        #         nn.init.constant_(m.weight, 1)
+        #         nn.init.constant_(m.bias, 0)
 
         # Zero-initialize the last BN in each residual branch,
         # so that the residual branch starts with zeros, and each residual block behaves like an identity.
