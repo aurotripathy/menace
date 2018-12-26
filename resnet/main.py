@@ -1,18 +1,21 @@
 from __future__ import print_function
 import argparse
 import torch
+import torch.nn.parallel
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from resnet import BasicBlock, BottleneckBlock, ResNet
 import torch.utils.model_zoo as model_zoo
+from utils import progress_bar
 from pudb import set_trace
     
 def train(args, model, device, train_loader, optimizer, criterion, epoch):
 
-    running_loss = 0.0
-    for i, (inputs, labels) in enumerate(train_loader, 0):
+    train_loss = 0.0
+    correct = 0
+    total = 0
+    for i, (inputs, labels) in enumerate(train_loader):
         inputs, labels = inputs.to(device), labels.to(device)        
         optimizer.zero_grad()
         outputs = model(inputs)
@@ -20,45 +23,31 @@ def train(args, model, device, train_loader, optimizer, criterion, epoch):
         loss.backward()
         optimizer.step()
 
-        # print statistics
-        running_loss += loss.item()
-        if i % args.log_interval == 0:
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / args.log_interval))
-            running_loss = 0.0
+        train_loss += loss.item()
 
-def test(args, model, device, test_loader):
-    correct = 0
-    total = 0
-    with torch.no_grad():
-        for (inputs, labels) in test_loader:
-            inputs, labels = inputs.to(device), labels.to(device)
-            outputs = model(inputs)
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-
-    print('Accuracy of the network on the test images: %d %%' % (
-        100 * correct / total))
-
-            
-def test(args, model, device, test_loader):
+        _, predicted = outputs.max(1)
+        total += labels.size(0)
+        correct += predicted.eq(labels).sum().item()
+        progress_bar(i, len(train_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                     % (train_loss/(i + 1), 100.*correct/total, correct, total))
+        
+def test(args, model, device, test_loader, criterion):
     model.eval()
     test_loss = 0
     correct = 0
+    total = 0
     with torch.no_grad():
-        for data, target in test_loader:
-            data, target = data.to(device), target.to(device)
-            output = model(data)
-            test_loss += F.nll_loss(output, target, reduction='sum').item() # sum up batch loss
-            pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
-            correct += pred.eq(target.view_as(pred)).sum().item()
+        for i, (inputs, labels) in enumerate(test_loader):
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            _, predicted = outputs.max(1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
 
-    test_loss /= len(test_loader.dataset)
-
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
+            progress_bar(i, len(test_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                % (test_loss/(i + 1), 100.*correct/total, correct, total))
+            
 
 def main():
     # Training settings
@@ -68,7 +57,7 @@ def main():
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
     parser.add_argument('--epochs', type=int, default=300, metavar='N',
-                        help='number of epochs to train (default: 10)')
+                        help='number of epochs to train (default: 300)')
     parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                         help='learning rate (default: 0.001)')
     parser.add_argument('--momentum', type=float, default=0.5, metavar='M',
@@ -92,23 +81,33 @@ def main():
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
 
 
-    # Load and normalizing the CIFAR10 training and test datasets using torchvision    
-    transform = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Normalize((0.1307,), (0.3081,))])
-    
+    # Load and normalize the CIFAR10 training and test datasets using torchvision
+    mean, std = (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)
+    train_transform_pipe = transforms.Compose([transforms.RandomCrop(32, padding=4),
+                                         transforms.RandomHorizontalFlip(),
+                                         transforms.ToTensor(),
+                                         transforms.Normalize(mean, std)])
+
+    test_transform_pipe = transforms.Compose([transforms.ToTensor(),
+                                              transforms.Normalize(mean, std)])
+
     train_loader = torch.utils.data.DataLoader(
         datasets.CIFAR10('../cifar10_data', train=True, download=True,
-                         transform=transform),
+                         transform=train_transform_pipe),
         batch_size=args.batch_size, shuffle=True, **kwargs)
     
     test_loader = torch.utils.data.DataLoader(
         datasets.CIFAR10('../cifar10_data', train=False,
-                         transform=transform),
+                         transform=test_transform_pipe),
         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
     # Define a Convolutional Neural Network
     model = ResNet(BottleneckBlock, [3, 4, 6, 3], 10, True).to(device)
-
+    total_model_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print("Total paramters:", total_model_params)
+    
+    model = torch.nn.DataParallel(model).cuda()
+    
     # Define a loss function
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
@@ -116,7 +115,7 @@ def main():
     # Train and test the network on the training data
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, criterion, epoch)
-        test(args, model, device, test_loader)
+        test(args, model, device, test_loader, criterion)
 
     if (args.save_model):
         torch.save(model.state_dict(),"mnist_cnn.pt")
