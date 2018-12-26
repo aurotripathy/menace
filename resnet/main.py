@@ -11,7 +11,7 @@ from utils import progress_bar
 from pudb import set_trace
     
 def train(args, model, device, train_loader, optimizer, criterion, epoch):
-
+    print("\nEpoch: {}".format(epoch))
     train_loss = 0.0
     correct = 0
     total = 0
@@ -22,9 +22,7 @@ def train(args, model, device, train_loader, optimizer, criterion, epoch):
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-
         train_loss += loss.item()
-
         _, predicted = outputs.max(1)
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
@@ -41,25 +39,24 @@ def test(args, model, device, test_loader, criterion):
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
             loss = criterion(outputs, labels)
+            test_loss += loss.item()
             _, predicted = outputs.max(1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-
             progress_bar(i, len(test_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                % (test_loss/(i + 1), 100.*correct/total, correct, total))
+                         % (test_loss/(i + 1), 100.*correct/total, correct, total))
 
             
 def main():
-    # Training settings
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Example',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--batch-size', type=int, default=128, metavar='N',
+    parser.add_argument('--batch-size', type=int, default=512, metavar='N',
                         help='input batch size for training (default: %(default)s)')
-    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
+    parser.add_argument('--test-batch-size', type=int, default=128, metavar='N',
                         help='input batch size for testing (default: %(default)s)')
-    parser.add_argument('--epochs', type=int, default=10, metavar='N',
+    parser.add_argument('--epochs', type=int, default=30, metavar='N',
                         help='number of epochs to train (default: %(default)s)')
-    parser.add_argument('--lr', type=float, default=0.1, metavar='LR',
+    parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                         help='learning rate (default: %(default)s)')
     parser.add_argument('--momentum', type=float, default=0.9, metavar='M',
                         help='SGD momentum (default: %(default)s)')
@@ -83,7 +80,7 @@ def main():
 
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
+    kwargs = {'num_workers': 2, 'pin_memory': True} if use_cuda else {}
 
 
     # Load and normalize the CIFAR10 training and test datasets using torchvision
@@ -106,19 +103,18 @@ def main():
                          transform=test_transform_pipe),
         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
-    # Define a Convolutional Neural Network
     model = ResNet(BottleneckBlock, [3, 4, 6, 3], 10, True).to(device)
     total_model_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print("Total paramters:", total_model_params)
+    print("Total model paramters:", total_model_params)
     
     model = torch.nn.DataParallel(model).cuda()
     
-    # Define a loss function
+    # Define a loss and optomizer function
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr,
                           momentum=args.momentum, weight_decay=args.weight_decay)
     
-    # Train and test the network on the training data
+    # Train and test the network
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, criterion, epoch)
         test(args, model, device, test_loader, criterion)
@@ -127,4 +123,5 @@ def main():
         torch.save(model.state_dict(),"mnist_cnn.pt")
         
 if __name__ == '__main__':
+    print('Using PyTorch version: {}'.format(torch.__version__))
     main()
