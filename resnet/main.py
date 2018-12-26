@@ -47,31 +47,36 @@ def test(args, model, device, test_loader, criterion):
 
             progress_bar(i, len(test_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                 % (test_loss/(i + 1), 100.*correct/total, correct, total))
-            
 
+            
 def main():
     # Training settings
-    parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Example')
+    parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Example',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--batch-size', type=int, default=128, metavar='N',
-                        help='input batch size for training (default: 64)')
+                        help='input batch size for training (default: %(default)s)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
-                        help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=300, metavar='N',
-                        help='number of epochs to train (default: 300)')
-    parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
-                        help='learning rate (default: 0.001)')
-    parser.add_argument('--momentum', type=float, default=0.5, metavar='M',
-                        help='SGD momentum (default: 0.9)')
+                        help='input batch size for testing (default: %(default)s)')
+    parser.add_argument('--epochs', type=int, default=10, metavar='N',
+                        help='number of epochs to train (default: %(default)s)')
+    parser.add_argument('--lr', type=float, default=0.1, metavar='LR',
+                        help='learning rate (default: %(default)s)')
+    parser.add_argument('--momentum', type=float, default=0.9, metavar='M',
+                        help='SGD momentum (default: %(default)s)')
+    parser.add_argument('--weight_decay', type=float, default=5e-4, metavar='M',
+                        help='SGD momentum (default: %(default)s)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
-                        help='random seed (default: 1)')
+                        help='random seed (default: %(default)s)')
     parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                        help='how many batches to wait before logging training status')    
+                        help='how many batches to wait before \
+                        logging training status (default: %(default)s)')    
     parser.add_argument('--save-model', action='store_true', default=False,
-                        help='For Saving the current Model')
+                        help='For Saving the current Model (default: %(default)s)')
     
     args = parser.parse_args()
+    print('Arguments:', args)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
 
     torch.manual_seed(args.seed)
@@ -110,7 +115,8 @@ def main():
     
     # Define a loss function
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    optimizer = optim.SGD(model.parameters(), lr=args.lr,
+                          momentum=args.momentum, weight_decay=args.weight_decay)
     
     # Train and test the network on the training data
     for epoch in range(1, args.epochs + 1):
