@@ -174,7 +174,7 @@ class BottleneckBlock(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, stacked_blocks, num_classes=10, zero_init_residual=False):
+    def __init__(self, block, stacked_block_counts, num_classes=10, zero_init_residual=False):
         super(ResNet, self).__init__()
         self.inplanes = 64
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
@@ -182,19 +182,12 @@ class ResNet(nn.Module):
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.layer1 = self._make_layer(block, 64, stacked_blocks[0])
-        self.layer2 = self._make_layer(block, 128, stacked_blocks[1], stride=2)
-        self.layer3 = self._make_layer(block, 256, stacked_blocks[2], stride=2)
-        self.layer4 = self._make_layer(block, 512, stacked_blocks[3], stride=2)
+        self.layer1 = self._make_layer(block, 64, stacked_block_counts[0])
+        self.layer2 = self._make_layer(block, 128, stacked_block_counts[1], stride=2)
+        self.layer3 = self._make_layer(block, 256, stacked_block_counts[2], stride=2)
+        self.layer4 = self._make_layer(block, 512, stacked_block_counts[3], stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-
-        # for m in self.modules():
-        #     if isinstance(m, nn.Conv2d):
-        #         nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-        #     elif isinstance(m, nn.BatchNorm2d):
-        #         nn.init.constant_(m.weight, 1)
-        #         nn.init.constant_(m.bias, 0)
 
         # Zero-initialize the last BN in each residual branch,
         # so that the residual branch starts with zeros, and each residual block behaves like an identity.
@@ -206,7 +199,7 @@ class ResNet(nn.Module):
                 elif isinstance(m, BasicBlock):
                     nn.init.constant_(m.bn2.weight, 0)
 
-    def _make_layer(self, block, planes, blocks, stride=1):
+    def _make_layer(self, block, planes, block_count, stride=1):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
@@ -217,7 +210,7 @@ class ResNet(nn.Module):
         stacked_blocks = []
         stacked_blocks.append(block(self.inplanes, planes, stride, downsample))
         self.inplanes = planes * block.expansion
-        for _ in range(1, blocks):
+        for _ in range(1, block_count):
             stacked_blocks.append(block(self.inplanes, planes))
 
         return nn.Sequential(*stacked_blocks)
