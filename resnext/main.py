@@ -6,12 +6,12 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
 from resnext import ResNeXt
-import torch.utils.model_zoo as model_zoo
 from utils import progress_bar
 from pudb import set_trace
     
 def train(args, model, device, train_loader, optimizer, criterion, epoch):
     print("\nEpoch: {}".format(epoch))
+    model.train()
     train_loss = 0.0
     correct = 0
     total = 0
