@@ -12,6 +12,7 @@ from pudb import set_trace
     
 def train(args, model, device, train_loader, optimizer, criterion, epoch):
     print("\nEpoch: {}".format(epoch))
+    model.train()
     train_loss = 0.0
     correct = 0
     total = 0
