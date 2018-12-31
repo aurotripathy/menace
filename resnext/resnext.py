@@ -93,4 +93,4 @@ def test_resnext():
     y = net(x)
     print(y.size())
 
-test_resnext()  # output, torch.Size([1, 10])
+# test_resnext()  # output, torch.Size([1, 10])
