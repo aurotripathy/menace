@@ -1,0 +1,1 @@
+{"data": "ml-20m", "epochs": 20, "batch_size": 2048, "factors": 64, "layers": [256, 256, 128, 64], "negative_samples": 4, "learning_rate": 0.0005, "topk": 10, "no_cuda": false, "seed": 1, "threshold": 0.635, "processes": 10, "workers": 8, "timestamp": "1546681075", "local_timestamp": "2019-01-04 17:37:55.098383"}
