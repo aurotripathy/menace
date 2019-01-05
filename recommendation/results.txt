@@ -1,0 +1,25 @@
+Epoch 6 Loss 0.0925 (0.0944): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 48491/48491 [11:05<00:00, 72.88it/s]
+Epoch 6 evaluation
+
+:::MLPv0.5.0 ncf 1546660097.081748962 (./ncf.py:108) eval_start: 6
+
+:::MLPv0.5.0 ncf 1546660176.655979156 (./ncf.py:130) eval_size: {"epoch": 6, "value": 138493000}
+
+:::MLPv0.5.0 ncf 1546660176.656398058 (./ncf.py:131) eval_hp_num_users: 138493
+
+:::MLPv0.5.0 ncf 1546660176.656679630 (./ncf.py:132) eval_hp_num_neg: 999
+
+:::MLPv0.5.0 ncf 1546660176.661556482 (./ncf.py:265) eval_accuracy: {"epoch": 6, "value": 0.6361332535743713}
+
+:::MLPv0.5.0 ncf 1546660176.661866903 (./ncf.py:266) eval_target: 0.635
+
+:::MLPv0.5.0 ncf 1546660176.662107706 (./ncf.py:267) eval_stop
+Epoch 6: HR@10 = 0.6361, NDCG@10 = 0.3830, train_time = 665.39, val_time = 79.58
+Hit threshold of 0.635
+
+:::MLPv0.5.0 ncf 1546660176.662666321 (./ncf.py:280) run_stop: {"success": true}
+
+:::MLPv0.5.0 ncf 1546660176.662931204 (./ncf.py:281) run_final
+Finish training in 5520 seconds
+ENDING TIMING RUN AT 2019-01-04 07:49:41 PM
+RESULT,recommendation,1,6410,auro,2019-01-04 06:02:51 PM
