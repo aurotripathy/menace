@@ -1,4 +1,8 @@
-# Detectron
+## Made one simple change; added ShuffleNetV2 backbone to Detectron
+
+The network is defined in in the directory, detectron/modeling/ShuffleNetV2.py (from https://github.com/wolegechu/ShuffleNetV2.Caffe2) 
+
+The training invocation is defined in configs/getting_started/tutorial_3gpu_e2e_faster_rcnn_shufflenetv2.yaml
 
 Detectron is Facebook AI Research's software system that implements state-of-the-art object detection algorithms, including [Mask R-CNN](https://arxiv.org/abs/1703.06870). It is written in Python and powered by the [Caffe2](https://github.com/caffe2/caffe2) deep learning framework.
 
