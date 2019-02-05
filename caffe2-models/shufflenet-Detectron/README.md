@@ -1,4 +1,4 @@
-## Made one simple change; added ShuffleNetV2 backbone to Detectron
+#### Added ShuffleNetV2 backbone to Detectron
 
 The network is defined in in the directory, detectron/modeling/ShuffleNetV2.py (from https://github.com/wolegechu/ShuffleNetV2.Caffe2) 
 
