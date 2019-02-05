@@ -2,7 +2,15 @@
 
 The network is defined in in the directory, `detectron/modeling/ShuffleNetV2.py` (from https://github.com/wolegechu/ShuffleNetV2.Caffe2) 
 
-The training invocation is defined in `configs/getting_started/tutorial_3gpu_e2e_faster_rcnn_shufflenetv2.yaml`.
+The training configuration is defined in `configs/getting_started/tutorial_3gpu_e2e_faster_rcnn_shufflenetv2.yaml`.
+
+A sample training invocation is below.
+
+```
+python tools/train_net.py \
+--cfg configs/getting_started/tutorial_3gpu_e2e_faster_rcnn_shufflenetv2.yaml  \
+OUTPUT_DIR /tmp/detectron-output
+```
 
 The rest of the Detectron project is intact.
 
