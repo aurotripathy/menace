@@ -8,8 +8,8 @@ A sample training invocation is below.
 
 ```
 python tools/train_net.py \
---cfg configs/getting_started/tutorial_3gpu_e2e_faster_rcnn_shufflenetv2.yaml  \
-OUTPUT_DIR /tmp/detectron-output
+    --cfg configs/getting_started/tutorial_3gpu_e2e_faster_rcnn_shufflenetv2.yaml  \
+    OUTPUT_DIR /tmp/detectron-output
 ```
 
 The rest of the Detectron project is intact.
@@ -32,7 +32,8 @@ codebase for object detection *research*. It is designed to be flexible in order
 to support rapid implementation and evaluation of novel research. Detectron
 includes implementations of the following object detection algorithms:
 
-- [Mask R-CNN](https://arxiv.org/abs/1703.06870) -- *Marr Prize at ICCV 2017*
+- [Mask R-CNN](https://arxiv.org/apython tools/train_net.py     --cfg configs/getting_started/tutorial_3gpu_e2e_faster_rcnn_shufflenetv2.yaml     OUTPUT_DIR /tmp/detectron-output
+bs/1703.06870) -- *Marr Prize at ICCV 2017*
 - [RetinaNet](https://arxiv.org/abs/1708.02002) -- *Best Student Paper Award at ICCV 2017*
 - [Faster R-CNN](https://arxiv.org/abs/1506.01497)
 - [RPN](https://arxiv.org/abs/1506.01497)
