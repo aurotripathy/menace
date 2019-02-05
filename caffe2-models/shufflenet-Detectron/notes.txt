@@ -1,0 +1,14 @@
+DETECTRON=/home/auro/caffe2-models/Detectron/
+
+COCOAPI=/home/auro/caffe2-models/Detectron/cocoapi
+
+ln -s /media/auro/RAID\ 5/coco $DETECTRON/detectron/datasets/data/coco
+
+
+https://github.com/wolegechu/ShuffleNetV2.Caffe2
+
+adding inception backbone to detectron
+
+https://github.com/srikanth-kilaru/ml349_ObjectDetection_CNN
+
+
