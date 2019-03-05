@@ -33,7 +33,6 @@ class GroupedBlock(nn.Module):
         out += self.shortcut(x)
         out = F.relu(out)
         return out
-    
 
 
 class ResNeXt(nn.Module):
@@ -79,18 +78,34 @@ class ResNeXt(nn.Module):
 def ResNeXt29_2x64d():
     return ResNeXt(num_blocks_list=[3,3,3], cardinality=2, bottleneck_width=64)
 
+
 def ResNeXt29_4x64d():
     return ResNeXt(num_blocks_list=[3,3,3], cardinality=4, bottleneck_width=64)
+
 
 def ResNeXt29_8x64d():
     return ResNeXt(num_blocks_list=[3,3,3], cardinality=8, bottleneck_width=64)
 
+
 def ResNeXt29_32x4d():
     return ResNeXt(num_blocks_list=[3,3,3], cardinality=32, bottleneck_width=4)
+
+
 def test_resnext():
     net = ResNeXt29_2x64d()
     x = torch.randn(1,3,32,32)
     y = net(x)
     print(y.size())
+
+
+def params_in_model(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+    
+    
+if __name__ == "__main__":
+    print('Params in model, C = 2, BW = 64:', params_in_model(ResNeXt29_2x64d()))
+    print('Params in model, C = 4, BW = 64:', params_in_model(ResNeXt29_4x64d()))
+    print('Params in model, C = 8, BW = 64:', params_in_model(ResNeXt29_8x64d()))
+    print('Params in model, C = 32, BW = 4:', params_in_model(ResNeXt29_32x4d()))
 
 # test_resnext()  # output, torch.Size([1, 10])
