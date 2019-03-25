@@ -1,6 +1,6 @@
 #### Added ShuffleNetV2 Backbone to Detectron
 
-The network is defined in the directory, `detectron/modeling/ShuffleNetV2.py` (from https://github.com/wolegechu/ShuffleNetV2.Caffe2) 
+The ShuffleNet network is defined in the directory, `detectron/modeling/ShuffleNetV2.py` (from https://github.com/wolegechu/ShuffleNetV2.Caffe2) 
 
 The training configuration is defined in `configs/getting_started/tutorial_3gpu_e2e_faster_rcnn_shufflenetv2.yaml`.
 
