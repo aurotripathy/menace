@@ -16,14 +16,19 @@ env.reset()
 im = plt.imshow(env.render(mode='rgb_array'), animated=True)
 
 
-def updatefig(*args):
+def updatefig(frame, *fargs):
+    global anim
+    print(frame, fargs)
     im.set_data(env.render(mode='rgb_array'))
     action = env.action_space.sample()
     _, _, done, _ = env.step(action)
     if done:
         env.reset()
-    return im,
+        anim.event_source.stop()
+    # return im,
 
-
-ani = animation.FuncAnimation(fig, updatefig, interval=10, blit=True)
+status ='running'
+anim = animation.FuncAnimation(fig, updatefig, fargs=(1,2,3), frames=10000, interval=10, blit=False, repeat=False)
 plt.show()
+
+    
