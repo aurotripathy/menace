@@ -19,9 +19,11 @@ im = plt.imshow(env.render(mode='rgb_array'), animated=True)
 def updatefig(*args):
     im.set_data(env.render(mode='rgb_array'))
     action = env.action_space.sample()
-    env.step(action)
+    _, _, done, _ = env.step(action)
+    if done:
+        env.reset()
     return im,
 
 
-ani = animation.FuncAnimation(fig, updatefig, interval=50, blit=True)
+ani = animation.FuncAnimation(fig, updatefig, interval=10, blit=True)
 plt.show()
