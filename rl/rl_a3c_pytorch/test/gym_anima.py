@@ -11,11 +11,9 @@ import matplotlib.animation as animation
 import gym
 
 fig = plt.figure()
-# env = gym.make('Breakout-v0')
 env = gym.make('MsPacman-v0')
 env.reset()
 im = plt.imshow(env.render(mode='rgb_array'), animated=True)
-
 
 
 def updatefig(*args):
