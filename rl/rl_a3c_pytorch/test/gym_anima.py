@@ -1,10 +1,9 @@
 """
-=================
-An animated image
-=================
-
-This example demonstrates how to animate an image.
+===========================================
+Open AI gym running as matplotlib animation
+===========================================
 """
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
