@@ -1,5 +1,8 @@
 Cloned from https://github.com/dgriff777/rl_a3c_pytorch
 
+Using container rocm/pytorch:rocm2.2_ubuntu16.04_py3.6_pytorch
+
+
 [23]: https://github.com/dgriff777/a3c_continuous
 
 ## NEWLY ADDED A3G A NEW GPU/CPU ARCHITECTURE OF A3C FOR SUBSTANTIALLY ACCELERATED TRAINING!!
