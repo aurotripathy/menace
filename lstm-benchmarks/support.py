@@ -6,7 +6,7 @@ import numpy as np
 import os.path
 import pandas as pd
 
-def default_params():
+def default_hyperparams():
     rnn_size = 320
     learning_rate = 1e-3
     batches = 500
@@ -75,9 +75,8 @@ def check_results(batch_loss_list, batch_time_list, train_start, train_end):
     deviation = np.abs((1 - factor) * 100)
 
     if deviation < 1:  # Less than 1% deviation
-        print('>>> Timing check passed -  < 1% deviation between loop time and sum of batches ::: Loop time {:.3f} ::: Sum of batch times {:.3f} ::: Deviation [%] {:.3f}'.format(loop_time,
-	                                                                                                                                                                          batch_time_sum,
-														                                                                  deviation))
+        print('>>> Timing check passed -  < 1% deviation between loop time and sum of batches')
+        print('Loop time {:.3f} Sum of batch times {:.3f} Deviation [%] {:.3f}'.format(loop_time, batch_time_sum, deviation))
     else:
         print('!!! Timing check failed - Deviation > 1% ::: Loop time {:.3f} ::: Sum of batch times {:.3f} :::'
 	      ' Deviation [%] {:.3f}'.format(loop_time, batch_time_sum, deviation))
