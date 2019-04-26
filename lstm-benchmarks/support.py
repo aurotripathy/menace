@@ -6,7 +6,6 @@ import numpy as np
 import os.path
 import pandas as pd
 
-
 def default_params():
     rnn_size = 320
     learning_rate = 1e-3
@@ -38,7 +37,7 @@ def toy_batch_ctc(seed=11, shape=(32, 1000, 123), classes=59):
     # print(b_lenX)
     maskX = np.zeros((batch_size, max_len), dtype='float32')
     for i, len_sample in enumerate(b_lenX):
-	maskX[i, :len_sample] = np.ones((1, len_sample))
+        maskX[i, :len_sample] = np.ones((1, len_sample))
 
     # Targets
     bY = np.int32(np.random.randint(low=1, high=classes - 1,
@@ -56,18 +55,18 @@ def check_results(batch_loss_list, batch_time_list, train_start, train_end):
     # 0. Check if loss is numeric (not NAN and not inf)
     check_loss=[np.isfinite(loss) for loss in batch_loss_list]
     if False not in check_loss:
-	print('>>> Loss check 1/2 passed: loss is finite {}'.format(np.unique(check_loss)))
+        print('>>> Loss check 1/2 passed: loss is finite {}'.format(np.unique(check_loss)))
     else:
-	print('!!! Loss check 1/2 failed: loss is NOT finite {}'.format(np.unique(check_loss)))
-	abort = 1
+        print('!!! Loss check 1/2 failed: loss is NOT finite {}'.format(np.unique(check_loss)))
+        abort = 1
 
     # 1. Check if loss is decreasing
     check_loss=np.diff(batch_loss_list)
     if np.sum(check_loss)<0:
-	print('>>> Loss check 2/2 passed: loss is globally decreasing')
+        print('>>> Loss check 2/2 passed: loss is globally decreasing')
     else:
-	print('!!! Loss check 2/2 failed: loss is NOT globally decreasing')
-	abort=1
+        print('!!! Loss check 2/2 failed: loss is NOT globally decreasing')
+        abort=1
 
     # 2. Check deviation between the full loop time and the sum of individual batches
     loop_time = train_end - train_start
@@ -80,13 +79,13 @@ def check_results(batch_loss_list, batch_time_list, train_start, train_end):
 	                                                                                                                                                                          batch_time_sum,
 														                                                                  deviation))
     else:
-	print('!!! Timing check failed - Deviation > 1% ::: Loop time {:.3f} ::: Sum of batch times {:.3f} :::'
+        print('!!! Timing check failed - Deviation > 1% ::: Loop time {:.3f} ::: Sum of batch times {:.3f} :::'
 	      ' Deviation [%] {:.3f}'.format(loop_time, batch_time_sum, deviation))
-	abort=1
+        abort=1
 
     if abort==1:
         sys.exit('!!! Abort benchmark.')
-	print('=' * 100)
+        print('=' * 100)
 
 
 def write_results(script_name, bench, experiment, parameters, run_time, version=None,
@@ -97,25 +96,25 @@ def write_results(script_name, bench, experiment, parameters, run_time, version=
         repo_path = os.path.dirname(os.path.realpath(__file__))
     
         with open(os.path.join(repo_path, 'results', 'conf')) as f:
-	    mode = f.readline().strip()
+            mode = f.readline().strip()
             
         logfile = os.path.join(repo_path, 'results', mode, 'results.csv')
 
     # Prepare header
     if os.path.isfile(logfile) == False:
-	df = pd.DataFrame(index=None, columns=['name', 'bench', 'version', 'experiment', 'parameters', 'runtime'])
-	df.to_csv(logfile, index=None)
+        df = pd.DataFrame(index=None, columns=['name', 'bench', 'version', 'experiment', 'parameters', 'runtime'])
+        df.to_csv(logfile, index=None)
 
     # Prepare new results
     row_list = []
     for rt in run_time:
-	row = OrderedDict()
-	row['experiment'] = experiment
-	row['bench'] = bench
-	row['version'] = version
-	row['name'] = script_name
-	row['parameters'] = parameters
-	row['runtime'] = rt
+        row = OrderedDict()
+        row['experiment'] = experiment
+        row['bench'] = bench
+        row['version'] = version
+        row['name'] = script_name
+        row['parameters'] = parameters
+        row['runtime'] = rt
 
         row_list.append(row)
 
@@ -131,12 +130,12 @@ def print_results(run_time):
     if len(run_time) > 100:
         run_time = run_time[100:]
     else:
-	print('!!! First 100 batches are considered as warm-up. Please run more batches')
-	run_time=np.asarray(run_time)*1000
-	print(
-	    '>>> Time per batch [ms] ::: Mean {:.1f} ::: Std {:.1f} ::: Median {:.1f} ::: 99Percentile {:.1f} ::: Min {:.1f} ::: Max {:.1f}'.format(
-		np.mean(run_time), np.std(run_time),
-		np.median(run_time), np.percentile(run_time, 99), np.min(run_time), np.max(run_time)))
+        print('!!! First 100 batches are considered as warm-up. Please run more batches')
+        run_time=np.asarray(run_time)*1000
+        print(
+            '>>> Time per batch [ms] ::: Mean {:.1f} ::: Std {:.1f} ::: Median {:.1f} ::: 99Percentile {:.1f} ::: Min {:.1f} ::: Max {:.1f}'.format(
+                np.mean(run_time), np.std(run_time),
+                np.median(run_time), np.percentile(run_time, 99), np.min(run_time), np.max(run_time)))
 
 def plot_results(time):
     fig, ax = plt.subplots()
@@ -166,7 +165,7 @@ def sparse_tuple_from(sequences, dtype=np.int32):
 
     for n, seq in enumerate(sequences):
         indices.extend(zip([n] * len(seq), range(len(seq))))
-	values.extend(seq)
+        values.extend(seq)
 
     indices = np.asarray(indices, dtype=np.int64)
     values = np.asarray(values, dtype=dtype)
