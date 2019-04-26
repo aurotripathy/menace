@@ -46,7 +46,7 @@ for param in list(net.parameters()):
     for el in param.size():
 	sizes = sizes * el
 	params += sizes
-	print('# network parameters: ' + str(params))
+print('# network parameters: ' + str(params))
 
 # Create optimizer
 optimizer = optim.Adam(net.parameters(), lr=learning_rate)
@@ -84,7 +84,7 @@ for i in range(batches):
     batch_end = timer.clock()
     batch_time.append(batch_end - batch_start)
     batch_loss.append(float(loss.data.cpu().numpy()))
-    train_end = timer.clock() # end of training
+train_end = timer.clock() # end of training
 
 # Write results
 print_results(batch_time)
