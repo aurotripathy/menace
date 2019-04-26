@@ -9,13 +9,23 @@ from torch.autograd import Variable
 
 from support import toy_batch, default_params, write_results, print_results, check_results
 
+def get_paramter_count():
+    params = 0
+    for param in list(net.parameters()):
+        sizes = 1
+        for el in param.size():
+            sizes = sizes * el
+            params += sizes
+    return params
+    
+
 # Experiment_type
 bench = 'pytorch_cudnnLSTM'
 version = torch.__version__
 experiment = '1x320-LSTM_cross-entropy'
 
 # Get data
-bX, b_lenX, bY, classes = toy_batch()
+bX, _, bY, classes = toy_batch()
 batch_size, seq_len, inp_dims = bX.shape
 rnn_size, learning_rate, batches = default_params()
 
@@ -26,27 +36,21 @@ bX = np.transpose(bX, (1, 0, 2))
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-	self.lstm = nn.LSTM(input_size=inp_dims, hidden_size=rnn_size, num_layers=1, bias=True, bidirectional=False)
-	self.fc = nn.Linear(rnn_size, classes, bias=False)
+        self.lstm = nn.LSTM(input_size=inp_dims, hidden_size=rnn_size, num_layers=1,
+                            bias=True, bidirectional=False)
+        self.fc = nn.Linear(rnn_size, classes, bias=False)
 
     def forward(self, x):
         h1, state = self.lstm(x)
-	h2 = h1[-1, :, :]
-	h3 = self.fc(h2)
-	return h3
+        h2 = h1[-1, :, :]
+        h3 = self.fc(h2)
+        return h3
 
 
 net = Net()
 net.cuda()
 
-# Print parameter count
-params = 0
-for param in list(net.parameters()):
-    sizes = 1
-    for el in param.size():
-	sizes = sizes * el
-	params += sizes
-print('# network parameters: ' + str(params))
+params = get_paramter_count()
 
 # Create optimizer
 optimizer = optim.Adam(net.parameters(), lr=learning_rate)
