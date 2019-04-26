@@ -1,3 +1,15 @@
+"""
+Attributions:
+code from https://github.com/stefbraun/rnn_benchmarks (minor changes)
+Arxiv paper https://arxiv.org/abs/1806.01818
+Essentially, a single-layer LSTM with 
+- 320 hidden units
+- 100 time steps
+- batch size 64
+- 1D input feature size, 123
+- output 10 classes
+"""
+
 import os
 import time as timer
 
@@ -7,7 +19,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
 
-from support import toy_batch, default_hyperparams, write_results, print_results, check_results
+from support import toy_batch, default_hyperparams, print_results, check_results
 
 def get_paramter_count():
     params = 0
@@ -19,16 +31,12 @@ def get_paramter_count():
     return params
     
 
-# Experiment_type
-bench = 'pytorch_cudnnLSTM'
-version = torch.__version__
-experiment = '1x320-LSTM_cross-entropy'
-
 # Get data
 bX, _, bY, classes = toy_batch()
 batch_size, seq_len, inp_dims = bX.shape
 hidden_units_size, learning_rate, batches = default_hyperparams()
-print("Hidden unit:{}, learming rate:{}, batches:{}".format(hidden_units_size, learning_rate, batches))
+print("Hidden units:{}, Learming Rate:{}, Batches:{}".format(hidden_units_size,
+                                                             learning_rate, batches))
 
 # PyTorch compatibility: time first, batch second
 bX = np.transpose(bX, (1, 0, 2))
@@ -72,7 +80,7 @@ batch_time = []
 batch_loss = []
 print("Starting the training benchmark with {} batches".format(batches))
 train_start = timer.clock()
-for i in range(batches):
+for _ in range(batches):
     torch.cuda.synchronize() # synchronize function call for precise time measurement
     batch_start = timer.clock()
 
@@ -94,5 +102,4 @@ train_end = timer.clock() # end of training
 # Write results
 print_results(batch_time)
 check_results(batch_loss, batch_time, train_start, train_end)
-# write_results(script_name=os.path.basename(__file__), bench=bench, experiment=experiment, parameters=params,
-#               run_time=batch_time, version=version, logfile="logfile")
+
