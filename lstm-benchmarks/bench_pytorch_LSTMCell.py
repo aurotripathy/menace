@@ -42,7 +42,7 @@ def get_paramter_count():
 bX, _, bY, classes = toy_batch()
 batch_size, seq_len, inp_dims = bX.shape
 hidden_units_size, learning_rate, batches = default_hyperparams()
-print("Hidden units:{}, Learming Rate:{}, Batches:{}".format(hidden_units_size,
+print("Hidden units:{}, Learning Rate:{}, Batches:{}".format(hidden_units_size,
                                                              learning_rate, batches))
 
 # PyTorch compatibility: time first, batch second
