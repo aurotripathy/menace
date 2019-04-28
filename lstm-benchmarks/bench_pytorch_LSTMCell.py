@@ -7,7 +7,7 @@ Benchmarking a single-layer LSTM with:
 - 320 hidden units
 - 100 time steps
 - batch size 64
-- 1D input feature size, 123
+- 1D input feature size, 125
 - output 10 classes
 
 LSTMCell takes ONE input x_t at time t.
@@ -72,11 +72,11 @@ def train_lstm():
         batch_start = timer.clock()
 
         t_b_X = Variable(torch.from_numpy(time_first_batch_of_X).cuda())
-        t_b_y = Variable(torch.from_numpy(time_first_batch_of_y).cuda())
+        b_y = Variable(torch.from_numpy(batch_of_y).cuda())
 
         optimizer.zero_grad()
         output = net(t_b_X)
-        loss = criterion(output, t_b_y.long())
+        loss = criterion(output, b_y.long())
         loss.backward()
         optimizer.step()
 
@@ -87,10 +87,11 @@ def train_lstm():
     print_results(batch_loss, batch_time, train_start, train_end)
 
 if __name__ == '__main__':
+
     hidden_units_size, learning_rate, seq_len, batch_size, nb_batches = set_hyperparams()
     classes = 10
     in_dim = 125
-    time_first_batch_of_X, time_first_batch_of_y = get_batch(shape=(seq_len, batch_size, in_dim), classes=classes)
+    time_first_batch_of_X, batch_of_y = get_batch(shape=(seq_len, batch_size, in_dim), classes=classes)
     print("Hidden units:{}, Learning Rate:{}, LSTM time steps:{} Batch size:{}, Batches:{}".format(hidden_units_size,
                                                                                                    learning_rate, seq_len,
                                                                                                    batch_size, nb_batches))
