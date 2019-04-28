@@ -1,8 +1,12 @@
+"""
+Utilities that suppport the benchmark
+"""
 import sys
 import numpy as np
 
 
 def set_hyperparams():
+    """ lSTM hyperparameters"""
     lstm_size = 320
     learning_rate = 1e-3
     seq_len = 100
@@ -12,21 +16,28 @@ def set_hyperparams():
 
 
 def get_batch(seed=11, shape=(100, 64, 125), classes=10):
+    """
+    Generate random data and labels
+    The input has shape time, batch, input dimension
+    """
     _, batch_size, _ = shape
     np.random.seed(seed)
 
-    # Samples
-    bX = np.float32(np.random.uniform(-1, 1, (shape)))
+    # Samples, time, batch, X
+    t_b_X = np.float32(np.random.uniform(-1, 1, (shape)))
 
-    # Targets
-    bY = np.int32(np.random.randint(low=0, high=classes - 1, size=batch_size))
+    # Targets, single output per batch
+    b_y = np.int32(np.random.randint(low=0, high=classes - 1, size=batch_size))
 
-    return bX, bY
+    return t_b_X, b_y
 
 
 
 def print_results(batch_loss_list, batch_time_list, train_start, train_end):
-
+    """
+    Validate amd print the results by reviewing
+    the loss behaviour at every batch
+    """
     abort = False
 
     # 0. Check if loss is numeric (not NAN and not inf)
