@@ -18,15 +18,11 @@ LSTM takes a SEQUENCE of inputs x_1,x_2,…,x_T.
 """
 
 import time as timer
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
-
-from support import get_batch, set_hyperparams, print_results, check_results
-
-
+from support import get_batch, set_hyperparams, print_results
 
 class Net(nn.Module):
     """ Create the LSTM network """
@@ -36,13 +32,11 @@ class Net(nn.Module):
         self.fully_connect = nn.Linear(hidden_units_size, classes, bias=False)
 
     def forward(self, x):
-        sequence_len, batch_size, features = x.size()
         h_lstm = Variable(torch.zeros(batch_size, hidden_units_size)).cuda()
         c_lstm = Variable(torch.zeros(batch_size, hidden_units_size)).cuda()
 
-        
         output = []
-        for i in range(sequence_len):
+        for i in range(seq_len):
             h_lstm, c_lstm = self.lstm(x[i], (h_lstm, c_lstm))
             output.append(h_lstm)
 
@@ -51,7 +45,9 @@ class Net(nn.Module):
         h3 = self.fully_connect(h2)
         return h3
 
+
 def validate_lstm_in_out():
+    """ Detect any dimension mismatch issues"""
     assert net.fully_connect.in_features == hidden_units_size
     assert (net.fully_connect.weight.cpu().data.numpy().shape == (
         classes, hidden_units_size))  # final projection output size (classes, hidden_units_size)
@@ -63,14 +59,15 @@ def validate_lstm_in_out():
 
 
 def train_lstm():
+    """ train for a nb_batches """
     optimizer = optim.Adam(net.parameters(), lr=learning_rate)
     criterion = nn.CrossEntropyLoss()  # loss definition
 
     batch_time = []
     batch_loss = []
-    print("Starting the training benchmark for {} batches".format(batches))
+    print("Starting the training benchmark for {} batches".format(nb_batches))
     train_start = timer.clock()
-    for _ in range(batches):
+    for _ in range(nb_batches):
         torch.cuda.synchronize() # synchronize function call for precise time measurement
         batch_start = timer.clock()
 
@@ -87,20 +84,17 @@ def train_lstm():
         batch_time.append(timer.clock() - batch_start)
         batch_loss.append(float(loss.data.cpu().numpy()))
     train_end = timer.clock()
-
-    print_results(batch_time)
-    check_results(batch_loss, batch_time, train_start, train_end)
+    print_results(batch_loss, batch_time, train_start, train_end)
 
 if __name__ == '__main__':
-    hidden_units_size, learning_rate, seq_len, batch_size, batches = set_hyperparams()
+    hidden_units_size, learning_rate, seq_len, batch_size, nb_batches = set_hyperparams()
     classes = 10
     in_dim = 125
     time_first_batch_of_X, time_first_batch_of_y = get_batch(shape=(seq_len, batch_size, in_dim), classes=classes)
-    print("Hidden units:{}, Learning Rate:{}, Batches:{}".format(hidden_units_size,
-                                                                 learning_rate, batches))
+    print("Hidden units:{}, Learning Rate:{}, LSTM time steps:{} Batch size:{}, Batches:{}".format(hidden_units_size,
+                                                                                                   learning_rate, seq_len,
+                                                                                                   batch_size, nb_batches))
 
-    # PyTorch compatibility: time first, batch second
-    # time_first_batch_of_X = np.transpose(time_first_batch_of_X, (1, 0, 2))
     net = Net()
     net.cuda()
     validate_lstm_in_out()
