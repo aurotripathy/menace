@@ -1,9 +1,6 @@
 import sys
-from collections import OrderedDict
-
 import numpy as np
-import os.path
-import pandas as pd
+
 
 def set_hyperparams():
     lstm_size = 320
@@ -15,12 +12,11 @@ def set_hyperparams():
 
 
 def get_batch(seed=11, shape=(100, 64, 125), classes=10):
-    max_len, batch_size, features = shape
+    _, batch_size, _ = shape
     np.random.seed(seed)
 
     # Samples
     bX = np.float32(np.random.uniform(-1, 1, (shape)))
-    b_lenX = np.int32(np.ones(batch_size) * max_len)
 
     # Targets
     bY = np.int32(np.random.randint(low=0, high=classes - 1, size=batch_size))
@@ -29,26 +25,25 @@ def get_batch(seed=11, shape=(100, 64, 125), classes=10):
 
 
 
-def check_results(batch_loss_list, batch_time_list, train_start, train_end):
+def print_results(batch_loss_list, batch_time_list, train_start, train_end):
 
-    # Initialize
-    abort = 0
+    abort = False
 
     # 0. Check if loss is numeric (not NAN and not inf)
-    check_loss=[np.isfinite(loss) for loss in batch_loss_list]
+    check_loss = [np.isfinite(loss) for loss in batch_loss_list]
     if False not in check_loss:
         print('>>> Loss check 1/2 passed: loss is finite {}'.format(np.unique(check_loss)))
     else:
         print('!!! Loss check 1/2 failed: loss is NOT finite {}'.format(np.unique(check_loss)))
-        abort = 1
+        abort = True
 
     # 1. Check if loss is decreasing
-    check_loss=np.diff(batch_loss_list)
-    if np.sum(check_loss)<0:
+    check_loss = np.diff(batch_loss_list)
+    if np.sum(check_loss) < 0:
         print('>>> Loss check 2/2 passed: loss is globally decreasing')
     else:
         print('!!! Loss check 2/2 failed: loss is NOT globally decreasing')
-        abort=1
+        abort = True
 
     # 2. Check deviation between the full loop time and the sum of individual batches
     loop_time = train_end - train_start
@@ -58,26 +53,15 @@ def check_results(batch_loss_list, batch_time_list, train_start, train_end):
 
     if deviation < 1:  # Less than 1% deviation
         print('>>> Timing check passed -  < 1% deviation between loop time and sum of batches')
-        print('Loop time {:.3f} Sum of batch times {:.3f} Deviation [%] {:.3f}'.format(loop_time, batch_time_sum, deviation))
+        
+        print("Total time {:.3f} seconds. Sum of batch times {:.3f} seconds. Deviation [%] {:.3f}".format(loop_time,
+                                                                                                          batch_time_sum,
+                                                                                                          deviation))
     else:
         print('!!! Timing check failed - Deviation > 1% ::: Loop time {:.3f} ::: Sum of batch times {:.3f} :::'
 	      ' Deviation [%] {:.3f}'.format(loop_time, batch_time_sum, deviation))
-        abort=1
+        abort = True
 
-    if abort==1:
+    if abort:
         sys.exit('!!! Abort benchmark.')
         print('=' * 100)
-
-
-
-def print_results(run_time):
-    if len(run_time) > 100:
-        run_time = run_time[100:]
-    else:
-        print('!!! First 100 batches are considered as warm-up. Please run more batches')
-        run_time=np.asarray(run_time)*1000
-        print(
-            '>>> Time per batch [ms] ::: Mean {:.1f} ::: Std {:.1f} ::: Median {:.1f} ::: 99Percentile {:.1f} ::: Min {:.1f} ::: Max {:.1f}'.format(
-                np.mean(run_time), np.std(run_time),
-                np.median(run_time), np.percentile(run_time, 99), np.min(run_time), np.max(run_time)))
-
