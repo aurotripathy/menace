@@ -27,23 +27,12 @@ from torch.autograd import Variable
 from support import get_batch, set_hyperparams, print_results, check_results
 
 
-# Get data
-hidden_units_size, learning_rate, seq_len, batch_size, batches = set_hyperparams()
-classes = 10
-in_dim = 125
-bX, bY = get_batch(shape=(batch_size, seq_len, in_dim), classes=classes)
-batch_size, seq_len, inp_dims = bX.shape
-print("Hidden units:{}, Learning Rate:{}, Batches:{}".format(hidden_units_size,
-                                                             learning_rate, batches))
-
-# PyTorch compatibility: time first, batch second
-bX = np.transpose(bX, (1, 0, 2))
 
 class Net(nn.Module):
     """ Create the LSTM network """
     def __init__(self):
         super(Net, self).__init__()
-        self.lstm = nn.LSTMCell(input_size=inp_dims, hidden_size=hidden_units_size, bias=True)
+        self.lstm = nn.LSTMCell(input_size=in_dim, hidden_size=hidden_units_size, bias=True)
         self.fully_connect = nn.Linear(hidden_units_size, classes, bias=False)
 
     def forward(self, x):
@@ -66,9 +55,9 @@ def validate_lstm_in_out():
     assert net.fully_connect.in_features == hidden_units_size
     assert (net.fully_connect.weight.cpu().data.numpy().shape == (
         classes, hidden_units_size))  # final projection output size (classes, hidden_units_size)
-    bXt = Variable(torch.from_numpy(bX).cuda())
+    t_b_X = Variable(torch.from_numpy(time_first_batch_of_X).cuda())
     torch.cuda.synchronize()
-    output = net(bXt)
+    output = net(t_b_X)
     output_numpy = output.data.cpu().numpy()
     assert output_numpy.shape == (batch_size, classes)
 
@@ -79,18 +68,18 @@ def train_lstm():
 
     batch_time = []
     batch_loss = []
-    print("Starting the training benchmark with {} batches".format(batches))
+    print("Starting the training benchmark for {} batches".format(batches))
     train_start = timer.clock()
     for _ in range(batches):
         torch.cuda.synchronize() # synchronize function call for precise time measurement
         batch_start = timer.clock()
 
-        bXt = Variable(torch.from_numpy(bX).cuda())
-        bYt = Variable(torch.from_numpy(bY).cuda())
+        t_b_X = Variable(torch.from_numpy(time_first_batch_of_X).cuda())
+        t_b_y = Variable(torch.from_numpy(time_first_batch_of_y).cuda())
 
         optimizer.zero_grad()
-        output = net(bXt)
-        loss = criterion(output, bYt.long())
+        output = net(t_b_X)
+        loss = criterion(output, t_b_y.long())
         loss.backward()
         optimizer.step()
 
@@ -99,11 +88,19 @@ def train_lstm():
         batch_loss.append(float(loss.data.cpu().numpy()))
     train_end = timer.clock()
 
-    # Write results
     print_results(batch_time)
     check_results(batch_loss, batch_time, train_start, train_end)
 
 if __name__ == '__main__':
+    hidden_units_size, learning_rate, seq_len, batch_size, batches = set_hyperparams()
+    classes = 10
+    in_dim = 125
+    time_first_batch_of_X, time_first_batch_of_y = get_batch(shape=(seq_len, batch_size, in_dim), classes=classes)
+    print("Hidden units:{}, Learning Rate:{}, Batches:{}".format(hidden_units_size,
+                                                                 learning_rate, batches))
+
+    # PyTorch compatibility: time first, batch second
+    # time_first_batch_of_X = np.transpose(time_first_batch_of_X, (1, 0, 2))
     net = Net()
     net.cuda()
     validate_lstm_in_out()
