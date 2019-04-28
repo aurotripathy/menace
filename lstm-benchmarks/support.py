@@ -14,8 +14,8 @@ def set_hyperparams():
     return lstm_size, learning_rate, seq_len, batch_size, batches
 
 
-def get_batch(seed=11, shape=(64, 100, 123), classes=10):
-    batch_size, max_len, features = shape
+def get_batch(seed=11, shape=(100, 64, 125), classes=10):
+    max_len, batch_size, features = shape
     np.random.seed(seed)
 
     # Samples
@@ -68,43 +68,6 @@ def check_results(batch_loss_list, batch_time_list, train_start, train_end):
         sys.exit('!!! Abort benchmark.')
         print('=' * 100)
 
-
-def write_results(script_name, bench, experiment, parameters, run_time, version=None,
-                  logfile=None):
-
-    if logfile == None:
-        # Get path
-        repo_path = os.path.dirname(os.path.realpath(__file__))
-    
-        with open(os.path.join(repo_path, 'results', 'conf')) as f:
-            mode = f.readline().strip()
-            
-        logfile = os.path.join(repo_path, 'results', mode, 'results.csv')
-
-    # Prepare header
-    if os.path.isfile(logfile) == False:
-        df = pd.DataFrame(index=None, columns=['name', 'bench', 'version', 'experiment', 'parameters', 'runtime'])
-        df.to_csv(logfile, index=None)
-
-    # Prepare new results
-    row_list = []
-    for rt in run_time:
-        row = OrderedDict()
-        row['experiment'] = experiment
-        row['bench'] = bench
-        row['version'] = version
-        row['name'] = script_name
-        row['parameters'] = parameters
-        row['runtime'] = rt
-
-        row_list.append(row)
-
-    dfa = pd.DataFrame.from_dict(row_list)
-
-    # Append new results
-    df = pd.read_csv(logfile)
-    df = df.append(dfa)
-    df.to_csv(logfile, index=None)
 
 
 def print_results(run_time):
