@@ -92,7 +92,7 @@ if __name__ == '__main__':
     classes = 10
     in_dim = 125
     time_first_batch_of_X, batch_of_y = get_batch(shape=(seq_len, batch_size, in_dim), classes=classes)
-    print("Hidden units:{}, Learning Rate:{}, LSTM time steps:{} Batch size:{}, Batches:{}".format(hidden_units_size,
+    print("Hidden units:{}, Learning Rate:{}, LSTM time steps:{}, Batch size:{}, Batches:{}".format(hidden_units_size,
                                                                                                    learning_rate, seq_len,
                                                                                                    batch_size, nb_batches))
 
