@@ -40,7 +40,7 @@ class Net(nn.Module):
             h_lstm, c_lstm = self.lstm(x[i], (h_lstm, c_lstm))
             output.append(h_lstm)
 
-        h1 = torch.stack(output)
+        h1 = torch.stack(output)  # concatenate the time-steps
         h2 = h1[-1, :, :]
         h3 = self.fully_connect(h2)
         return h3
