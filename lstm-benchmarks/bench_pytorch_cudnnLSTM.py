@@ -22,7 +22,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
-from support import get_batch, set_hyperparams, print_results
+from utils import get_batch, set_hyperparams, print_results
 
 class Net(nn.Module):
     def __init__(self):
