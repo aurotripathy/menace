@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Attributions:
 code loosely based on https://github.com/stefbraun/rnn_benchmarks
