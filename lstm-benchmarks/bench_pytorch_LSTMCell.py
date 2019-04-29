@@ -7,14 +7,15 @@ Benchmarking a single-layer LSTM with:
 - 320 hidden units
 - 100 time steps
 - batch size 64
-- 1D input feature size, 125
+- 1D input features, size 125
 - output 10 classes
 
 LSTMCell takes ONE input x_t at time t.
-    You need to loop in order to do one pass of backprop through time.
+    You need to loop time-steps in order to do one pass of 
+    backprop through time.
 
 LSTM takes a SEQUENCE of inputs x_1,x_2,…,x_T.
-    NO need to write a loop to do one pass of backprop through time.
+    NO need to loop time-steps to do one pass of backprop through time.
 """
 
 import time as timer
@@ -59,7 +60,7 @@ def validate_lstm_in_out():
 
 
 def train_lstm():
-    """ train for a nb_batches """
+    """ Train for a nb_batches """
     optimizer = optim.Adam(net.parameters(), lr=learning_rate)
     criterion = nn.CrossEntropyLoss()  # loss definition
 
@@ -68,7 +69,7 @@ def train_lstm():
     print("Starting the training benchmark for {} batches".format(nb_batches))
     train_start = timer.clock()
     for _ in range(nb_batches):
-        torch.cuda.synchronize() # synchronize function call for precise time measurement
+        torch.cuda.synchronize() # synchronize for precise time measurement
         batch_start = timer.clock()
 
         t_b_X = Variable(torch.from_numpy(time_first_batch_of_X).cuda())
@@ -80,7 +81,7 @@ def train_lstm():
         loss.backward()
         optimizer.step()
 
-        torch.cuda.synchronize() # synchronize function call for precise time measurement
+        torch.cuda.synchronize() # synchronize for precise time measurement
         batch_time.append(timer.clock() - batch_start)
         batch_loss.append(float(loss.data.cpu().numpy()))
     train_end = timer.clock()
