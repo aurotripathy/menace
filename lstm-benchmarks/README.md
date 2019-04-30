@@ -8,9 +8,7 @@ Code loosely based on https://github.com/stefbraun/rnn_benchmarks<br/>
 Arxiv paper, https://arxiv.org/abs/1806.01818<br/>
 
 Description:<br/>
-
 Benchmarking a single-layer LSTM with:<br/>
-
 - 320 hidden units<br/>
 - 100 time steps<br/>
 - batch size 64<br/>
