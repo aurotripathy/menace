@@ -1,4 +1,4 @@
-#### How to the LSTM benchmarks
+#### How to run the LSTM benchmarks
 
 `python bench_pytorch_LSTMCell.py  # to run the nn.LSTMCell based benchmark`
 
