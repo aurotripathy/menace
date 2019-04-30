@@ -5,7 +5,8 @@
 `python bench_pytorch_cudnnLSTM.py  # to run the nn.LSTM based benchmark`
 
 <code>
-Attributions:<br/>
+
+Attributions: <br/>
     
 Code loosely based on https://github.com/stefbraun/rnn_benchmarks<br/>
 
