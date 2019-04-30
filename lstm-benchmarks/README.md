@@ -1,8 +1,8 @@
 #### How to the LSTM benchmarks
 
-python bench_pytorch_LSTMCell.py  # to run the nn.LSTMCell based benchmark
+`python bench_pytorch_LSTMCell.py  # to run the nn.LSTMCell based benchmark`
 
-python bench_pytorch_cudnnLSTM.py  # to run the nn.LSTM based benchmark
+`python bench_pytorch_cudnnLSTM.py  # to run the nn.LSTM based benchmark`
 
 <code>
 Attributions:<br/>
