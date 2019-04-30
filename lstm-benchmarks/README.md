@@ -20,15 +20,13 @@ Benchmarking a single-layer LSTM with:<br/>
 
 - output 10 classes<br/>
 
-LSTMCell takes ONE input x_t at time t.<br/>
+##### LSTMCell takes ONE input x_t at time t.<br/>
 
-    You need to loop time-steps in order to do one pass of<br/>
+You need to loop time-steps in order to do one pass of backprop through time.
     
-    backprop through time.
-    
-LSTM takes a SEQUENCE of inputs x_1,x_2,…,x_T.
+##### LSTM takes a SEQUENCE of inputs x_1,x_2,…,x_T.
 
-    NO need to loop time-steps to do one pass of backprop through time.
+NO need to loop time-steps to do one pass of backprop through time.
     
   </code>
   
