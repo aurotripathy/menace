@@ -1,7 +1,7 @@
 #### How to run these simple LSTM benchmarks
 
 <code>
-Attributions:  
+Attributions:<br/>
 code loosely based on https://github.com/stefbraun/rnn_benchmarks
 
 Arxiv paper https://arxiv.org/abs/1806.01818
