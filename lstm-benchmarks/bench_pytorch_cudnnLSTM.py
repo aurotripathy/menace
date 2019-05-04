@@ -67,11 +67,11 @@ def train_lstm():
         t_b_X = Variable(torch.from_numpy(time_first_batch_of_X).cuda())
         b_y = Variable(torch.from_numpy(batch_of_y).cuda())
 
-        optimizer.zero_grad()
-        output = net(t_b_X)
-        loss = criterion(output, b_y.long())
-        loss.backward()
-        optimizer.step()
+        optimizer.zero_grad()  # Zero-out gradient container
+        output = net(t_b_X)  # Propagate forward
+        loss = criterion(output, b_y.long())  # Compute loss
+        loss.backward()  # Propagate backward
+        optimizer.step()  # Update gradients
 
         torch.cuda.synchronize() # synchronize function call for precise time measurement
         batch_time.append(timer.clock() - batch_start)
