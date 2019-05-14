@@ -25,14 +25,16 @@ def all_reduce_vgg_model_size():
     for tensor in tensors:
         expected.add_(tensor)  # add in-place
 
+    tensors = [tensors[i].cuda(i) for i in range(nGPUs)]  # move ith tensor into ith GPU
+    
     start_time = timer.time()
-    tensors = [tensors[i].cuda(i) for i in range(nGPUs)]  # move ith tensor into ith GPU 
     nccl.all_reduce(tensors)
     time_taken = timer.time() - start_time
     for tensor in tensors:
         assert torch.all(torch.eq(tensor.cpu(), expected))  # move to CPU and compare
     return time_taken
 
+_ = all_reduce_vgg_model()  # throw this one away as "warm up"
 reduction_time = all_reduce_vgg_model_size()
 
 print('Python VERSION:', sys.version)
