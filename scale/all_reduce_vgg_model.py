@@ -39,6 +39,7 @@ def time_all_reduce_vgg_model_size(repeat=12, discard=2):
         torch.cuda.synchronize()  # wait for all_reduce to complete
         end.record()
 
+        torch.cuda.synchronize()  # need to wait for op to finish
         times_per_iteration.append(start.elapsed_time(end))  # millisecs
 
         for tensor in tensors:
