@@ -30,16 +30,16 @@ def time_all_reduce_vgg_model_size(repeat=12, discard=2):
             expected.add_(tensor)  # add in-place on CPU
 
         tensors = [tensors[i].cuda(i) for i in range(nGPUs)]  # move ith tensor into ith GPU
-        torch.cuda.synchronize()
+        torch.cuda.synchronize()  # wait for move to complete
         
         start = torch.cuda.Event(enable_timing=True)
         end = torch.cuda.Event(enable_timing=True)
         start.record()
         nccl.all_reduce(tensors)
-        torch.cuda.synchronize()
+        torch.cuda.synchronize()  # wait for all_reduce to complete
         end.record()
 
-        times_per_iteration.append(start.elapsed_time(end))  # milli secs
+        times_per_iteration.append(start.elapsed_time(end))  # millisecs
 
         for tensor in tensors:
             assert torch.all(torch.eq(tensor.cpu(), expected))  # move to CPU and compare
@@ -52,6 +52,7 @@ def time_all_reduce_vgg_model_size(repeat=12, discard=2):
 reduction_time = time_all_reduce_vgg_model_size(12, 2)
 
 print('Python VERSION:', sys.version)
-print('pyTorch VERSION:', torch.__version__)
+print('PyTorch VERSION:', torch.__version__)
 print ('Available GPUs ', nGPUs)
-print("Time taken:{:.9f} milliseconds".format(reduction_time))
+print("Time taken:{:.6f} milliseconds".format(reduction_time))
+print("Ring reduce rate:{:.6} GB/s".format((size * 4 * 1.5) / (reduction_time /1000) /1.0e9))
