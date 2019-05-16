@@ -13,7 +13,7 @@ import torch.cuda
 import time as timer
 import sys
 
-size = 138000000
+model_size = 138000000
 const_val = 5.0
 
 nGPUs = torch.cuda.device_count()
@@ -24,8 +24,8 @@ def time_all_reduce_vgg_model_size(repeat=12, discard=2):
     times_per_iteration = []
 
     for _ in range(repeat):
-        tensors = [torch.FloatTensor(size).fill_(const_val) for i in range(nGPUs)]  # dim size, value random
-        expected = torch.FloatTensor(size).zero_()
+        tensors = [torch.FloatTensor(model_size).fill_(const_val) for i in range(nGPUs)]  # dim size, value random
+        expected = torch.FloatTensor(model_size).zero_()
         for tensor in tensors:
             expected.add_(tensor)  # add in-place on CPU
 
@@ -54,6 +54,7 @@ reduction_time = time_all_reduce_vgg_model_size(12, 2)
 
 print('Python VERSION:', sys.version)
 print('PyTorch VERSION:', torch.__version__)
+print('RCCL VERSION:', torch.cuda.nccl.version())
 print ('Available GPUs ', nGPUs)
-print("Time taken:{:.6f} milliseconds".format(reduction_time))
-print("Ring reduce rate:{:.6} GB/s".format((size * 4 * 1.5) / (reduction_time /1000) /1.0e9))
+print("Time taken to all_deduce {} float tensors:{:.6f} milliseconds".format(model_size, reduction_time))
+print("Ring reduce rate:{:.6} GB/s".format((model_size * 4 * 2 * (nGPUs -1) / nGPUs) / (reduction_time /1000) /1.0e9))
