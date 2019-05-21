@@ -35,30 +35,28 @@ class Net(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-def _get_train_data_loader(batch_size, training_dir, **kwargs):
+def _get_train_data_loader(batch_size, training_dir):
     logger.info("Get train data loader")
     dataset = datasets.MNIST(training_dir, train=True, transform=transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
     ]), download=True)
-    return torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True,
-                                       **kwargs)
+    return torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 
-def _get_test_data_loader(test_batch_size, training_dir, **kwargs):
+def _get_test_data_loader(test_batch_size, training_dir):
     logger.info("Get test data loader")
     return torch.utils.data.DataLoader(
         datasets.MNIST(training_dir, train=False, transform=transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.1307,), (0.3081,))
         ])),
-        batch_size=test_batch_size, shuffle=True, **kwargs)
+        batch_size=test_batch_size, shuffle=True)
 
 
 def train(args):
     use_cuda = args.num_gpus > 0
     logger.debug("Number of gpus available - {}".format(args.num_gpus))
-    kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # set the seed for generating random numbers
@@ -66,8 +64,8 @@ def train(args):
     if use_cuda:
         torch.cuda.manual_seed(args.seed)
 
-    train_loader = _get_train_data_loader(args.batch_size, args.data_dir, **kwargs)
-    test_loader = _get_test_data_loader(args.test_batch_size, args.data_dir, **kwargs)
+    train_loader = _get_train_data_loader(args.batch_size, args.data_dir)
+    test_loader = _get_test_data_loader(args.test_batch_size, args.data_dir)
 
     logger.debug("Processes {}/{} ({:.0f}%) of train data".format(
         len(train_loader.sampler), len(train_loader.dataset),
