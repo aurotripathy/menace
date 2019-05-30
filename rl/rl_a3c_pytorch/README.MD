@@ -1,5 +1,11 @@
 Cloned from https://github.com/dgriff777/rl_a3c_pytorch
 
+Use 
+
+    pip install -r requirements.txt 
+   
+before invocation
+
 Using container rocm/pytorch:rocm2.2_ubuntu16.04_py3.6_pytorch
 
 
