@@ -1,3 +1,5 @@
+`python main.py --cuda --num-processes 20 --gpu-ids 0 1 2 3`
+
 ```
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 418.40.04    Driver Version: 418.40.04    CUDA Version: 10.1     |
