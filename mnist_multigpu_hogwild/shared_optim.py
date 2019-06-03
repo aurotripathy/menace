@@ -1,3 +1,6 @@
+"""
+same as https://github.com/dgriff777/rl_a3c_pytorch/blob/master/shared_optim.py
+"""
 from __future__ import division
 import math
 from collections import defaultdict
