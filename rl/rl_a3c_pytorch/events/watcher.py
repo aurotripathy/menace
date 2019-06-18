@@ -3,11 +3,10 @@ import time
 import os
 
 from watchdog.observers import Observer
-# from events import CheckPointHandler
 
 from watchdog.events import RegexMatchingEventHandler
 
-sleep_time = -1  # Global scope
+sleep_time = None  # Global scope, not init'd here
 
 class CheckPointHandler(RegexMatchingEventHandler):
 
