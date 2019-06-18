@@ -1,3 +1,4 @@
+# https://github.com/rasbt/deeplearning-models/blob/master/pytorch_ipynb/cnn/cnn-vgg16-celeba-data-parallel.ipynb
 import os
 import time
 
@@ -103,17 +104,17 @@ BATCH_SIZE=64*torch.cuda.device_count()
 train_loader = DataLoader(dataset=train_dataset,
                           batch_size=BATCH_SIZE,
 			  shuffle=True,
-			  num_workers=4)
+			  num_workers=0)
 
 valid_loader = DataLoader(dataset=valid_dataset,
                           batch_size=BATCH_SIZE,
 			  shuffle=False,
-			  num_workers=4)
+			  num_workers=0)
 
 test_loader = DataLoader(dataset=test_dataset,
                          batch_size=BATCH_SIZE,
 			 shuffle=False,
-			 num_workers=4)
+			 num_workers=0)
 
 
 device = torch.device("cuda:0")
