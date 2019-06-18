@@ -1,8 +1,41 @@
 import sys
 import time
+import os
 
 from watchdog.observers import Observer
-from events import CheckPointHandler
+# from events import CheckPointHandler
+
+from watchdog.events import RegexMatchingEventHandler
+
+sleep_time = -1  # Global scope
+
+class CheckPointHandler(RegexMatchingEventHandler):
+
+    MODEL_REGEX = [r".*[^_thumbnail]\.dat$"]
+    
+    def __init__(self):
+        super().__init__(self.MODEL_REGEX)
+        
+    def on_modified(self, event):
+        print('Event:', event)
+        self.process(event)
+
+    def process(self, event):
+        global sleep_time
+        filename, ext = os.path.splitext(event.src_path)
+        print('Process: Filename', filename, 'Extension', ext)
+        with open('sleep.dat') as f:
+            sleep_time = int(f.read())
+
+
+def do_normal_processing():
+    global sleep_time
+    with open('sleep.dat') as f:
+        sleep_time = f.read()
+    while True:
+        print('Sleeping for {} seconds'.format(sleep_time))
+        time.sleep(int(sleep_time))
+    
 
 class CheckPointWatcher:
     def __init__(self, src_path):
@@ -13,8 +46,7 @@ class CheckPointWatcher:
     def run(self):
         self.start()
         try:
-            while True:
-                time.sleep(1)
+            do_normal_processing()
         except KeyboardInterrupt:
             self.stop()
 
