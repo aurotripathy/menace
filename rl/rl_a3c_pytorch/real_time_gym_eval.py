@@ -26,10 +26,18 @@ torch.manual_seed(args.seed)
 if gpu_id >= 0:
     torch.cuda.manual_seed(args.seed)
 
-saved_state = torch.load(
-    '{0}{1}.dat'.format(args.load_model_dir, args.env),
-    map_location=lambda storage, loc: storage)
-
+while True:
+    print('Looking for {}'.format(os.path.join(args.load_model_dir, args.env) + '.dat'))
+    if os.path.exists(os.path.join(args.load_model_dir, args.env) + '.dat'):
+        print("Found model...")
+        saved_state = torch.load(
+            '{0}{1}.dat'.format(args.load_model_dir, args.env),
+            map_location=lambda storage, loc: storage)
+        break
+    else:
+        print('...waiting for model to show up') 
+    time.sleep(1)
+    
 log = {}
 setup_logger('{}_mon_log'.format(args.env), r'{0}{1}_mon_log'.format(
     args.log_dir, args.env))
