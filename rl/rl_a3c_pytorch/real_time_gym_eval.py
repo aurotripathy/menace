@@ -14,8 +14,60 @@ from pudb import set_trace
 #from gym.configuration import undo_logger_setup
 
 #undo_logger_setup()
+from watchdog.observers import Observer
+from watchdog.events import RegexMatchingEventHandler
 
-saved_state = None  # Global
+saved_state = None  # Global scope, start w/None, init'd later 
+
+class CheckPointHandler(RegexMatchingEventHandler):
+
+    MODEL_REGEX = [r".*[^_thumbnail]\.dat$"]
+    
+    def __init__(self):
+        super().__init__(self.MODEL_REGEX)
+        
+    def on_modified(self, event):
+        print('Event:', event)
+        self.process(event)
+
+    def process(self, event):
+        global saved_state
+        print('Updating the model')
+        saved_state = torch.load(
+            '{0}{1}.dat'.format(args.load_model_dir, args.env),
+            map_location=lambda storage, loc: storage)
+
+
+class CheckPointWatcher:
+    def __init__(self, src_path):
+        self.__src_path = src_path
+        self.__event_handler = CheckPointHandler()
+        self.__event_observer = Observer()
+
+    def run(self):
+        self.start()
+        try:
+            do_normal_processing()
+        except KeyboardInterrupt:
+            self.stop()
+
+
+    def start(self):
+        self.__schedule()
+        self.__event_observer.start()
+
+    def stop(self):
+        self.__event_observer.stop()
+        self.__event_observer.join()
+
+    def __schedule(self):
+        self.__event_observer.schedule(
+            self.__event_handler,
+            self.__src_path,
+            recursive=True
+        )
+
+
 
 def do_normal_processing():
     global saved_state
@@ -118,5 +170,6 @@ def get_env_conf():
 if __name__ == "__main__":
     args = get_args()
     env_conf = get_env_conf()
-    do_normal_processing()
+    CheckPointWatcher(args.load_model_dir).run()
+
             
