@@ -147,8 +147,243 @@ num_features = 128*128
 num_classes = 2
 
 
-import torchvision.models as models
+##########################
+### MODEL
+##########################
 
-vgg16 = models.vgg16()
 
-print(vgg16)
+class VGG16(torch.nn.Module):
+
+    def __init__(self, num_features, num_classes):
+        super(VGG16, self).__init__()
+
+        # calculate same padding:
+        # (w - k + 2*p)/s + 1 = o
+        # => p = (s(o-1) - w + k)/2
+
+        self.block_1 = nn.Sequential(
+            nn.Conv2d(in_channels=3,
+                      out_channels=64,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      # (1(32-1)- 32 + 3)/2 = 1
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=(2, 2),
+                         stride=(2, 2))
+        )
+
+        self.block_2 = nn.Sequential(
+            nn.Conv2d(in_channels=64,
+                      out_channels=128,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=128,
+                      out_channels=128,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=(2, 2),
+                         stride=(2, 2))
+        )
+
+        self.block_3 = nn.Sequential(
+            nn.Conv2d(in_channels=128,
+                      out_channels=256,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=256,
+                      out_channels=256,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=256,
+                      out_channels=256,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=256,
+                      out_channels=256,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=(2, 2),
+                         stride=(2, 2))
+        )
+
+
+        self.block_4 = nn.Sequential(
+            nn.Conv2d(in_channels=256,
+                      out_channels=512,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=512,
+                      out_channels=512,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=512,
+                      out_channels=512,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=512,
+                      out_channels=512,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=(2, 2),
+                         stride=(2, 2))
+        )
+
+        self.block_5 = nn.Sequential(
+            nn.Conv2d(in_channels=512,
+                      out_channels=512,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=512,
+                      out_channels=512,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=512,
+                      out_channels=512,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=512,
+                      out_channels=512,
+                      kernel_size=(3, 3),
+                      stride=(1, 1),
+                      padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=(2, 2),
+                         stride=(2, 2))
+        )
+        
+        self.classifier = nn.Sequential(
+            nn.Linear(512*4*4, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, num_classes)
+        )
+
+    
+        for m in self.modules():
+            if isinstance(m, torch.nn.Conv2d):
+                #n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+                #m.weight.data.normal_(0, np.sqrt(2. / n))
+                m.weight.detach().normal_(0, 0.05)
+                if m.bias is not None:
+                    m.bias.detach().zero_()
+                elif isinstance(m, torch.nn.Linear):
+                    m.weight.detach().normal_(0, 0.05)
+                    m.bias.detach().detach().zero_()
+                    
+                    
+    def forward(self, x):
+
+        x = self.block_1(x)
+        x = self.block_2(x)
+        x = self.block_3(x)
+        x = self.block_4(x)
+        x = self.block_5(x)
+        
+        logits = self.classifier(x.view(-1, 512*4*4))
+        probas = F.softmax(logits, dim=1)
+
+        return logits, probas
+
+
+
+torch.manual_seed(random_seed)
+
+#### DATA PARALLEL START ####
+
+model = VGG16(num_features=num_features, num_classes=num_classes)
+if torch.cuda.device_count() > 1:
+    print("Using", torch.cuda.device_count(), "GPUs")
+    model = nn.DataParallel(model)
+    
+    #### DATA PARALLEL END ####
+    
+    model.to(device)
+    
+    #### DATA PARALLEL START ####
+    
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+
+def compute_accuracy(model, data_loader):
+    correct_pred, num_examples = 0, 0
+    for i, (features, targets) in enumerate(data_loader):
+        
+        features = features.to(device)
+        targets = targets.to(device)
+        
+        logits, probas = model(features)
+        _, predicted_labels = torch.max(probas, 1)
+        num_examples += targets.size(0)
+        correct_pred += (predicted_labels == targets).sum()
+    return correct_pred.float()/num_examples * 100
+
+
+start_time = time.time()
+for epoch in range(num_epochs):
+
+    model.train()
+    for batch_idx, (features, targets) in enumerate(train_loader):
+        
+        features = features.to(device)
+        targets = targets.to(device)
+
+        ### FORWARD AND BACK PROP
+        logits, probas = model(features)
+        cost = F.cross_entropy(logits, targets)
+        optimizer.zero_grad()
+        
+        cost.backward()
+        
+        ### UPDATE MODEL PARAMETERS
+        optimizer.step()
+        
+        ### LOGGING
+        if not batch_idx % 50:
+            print ('Epoch: %03d/%03d | Batch %04d/%04d | Cost: %.4f'
+                   %(epoch+1, num_epochs, batch_idx,
+                     len(train_loader), cost))
+
+    model.eval()
+    with torch.set_grad_enabled(False): # save memory during inference
+        print('Epoch: %03d/%03d | Train: %.3f%% | Valid: %.3f%%' % (
+            epoch+1, num_epochs,
+            compute_accuracy(model, train_loader),
+            compute_accuracy(model, valid_loader)))
+
+    print('Time elapsed: %.2f min' % ((time.time() - start_time)/60))
+
+    print('Total Training Time: %.2f min' % ((time.time() - start_time)/60))
