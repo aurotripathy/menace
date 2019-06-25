@@ -8,6 +8,7 @@ import sys
 import math
 import torch.nn as nn
 from fp16util import network_to_half, get_param_copy
+from torchsummary import summary
 
 def weight_init(m):
     if isinstance(m, nn.Conv2d):
@@ -85,6 +86,7 @@ def run_benchmarking(net, batch_size, iterations, run_fp16, dataparallel, distri
         torch.cuda.set_device("cuda:0")
 
     network = get_network(net)
+    
     if (run_fp16):
         network = network_to_half(network)
 
@@ -109,6 +111,7 @@ def run_benchmarking(net, batch_size, iterations, run_fp16, dataparallel, distri
     if (run_fp16):
         param_copy = get_param_copy(network)
     optimizer = torch.optim.SGD(param_copy, lr = 0.01, momentum = 0.9)
+    summary(network, inp.shape[1:])
 
     ## warmup.
     print ("INFO: running forward and backward for warmup.")
