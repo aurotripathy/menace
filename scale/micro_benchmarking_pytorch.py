@@ -109,8 +109,6 @@ def run_benchmarking(net, batch_size, iterations, run_fp16, dataparallel, distri
 
     if (net == "inception_v3"):
         inp = torch.randn(batch_size, 3, 299, 299, device="cuda")
-    elif net == 'ResNext101_32C_48d':
-        inp = torch.randn(batch_size, 3, 224, 224, device="cuda")
     else:
         inp = torch.randn(batch_size, 3, 224, 224, device="cuda")
     if (run_fp16):
