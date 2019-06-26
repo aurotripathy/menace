@@ -8,7 +8,10 @@ import sys
 import math
 import torch.nn as nn
 from fp16util import network_to_half, get_param_copy
-from torchsummary import summary
+
+
+def count_parameters(model):
+        return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def weight_init(m):
     if isinstance(m, nn.Conv2d):
@@ -63,6 +66,9 @@ def get_network(net):
         return torchvision.models.vgg16_bn().to(device="cuda")
     elif (net == "vgg19_bn"):
         return torchvision.models.vgg19_bn().to(device="cuda")
+    elif (net == "ResNext101_32C_48d"):
+        return torch.hub.load('facebookresearch/WSL-Images', 'resnext101_32x48d_wsl').to(device='cuda')
+
     else:
         print ("ERROR: not a supported model.")
         sys.exit(1)
@@ -86,6 +92,7 @@ def run_benchmarking(net, batch_size, iterations, run_fp16, dataparallel, distri
         torch.cuda.set_device("cuda:0")
 
     network = get_network(net)
+    print('Total parameters:', count_parameters(network))
     
     if (run_fp16):
         network = network_to_half(network)
@@ -102,6 +109,8 @@ def run_benchmarking(net, batch_size, iterations, run_fp16, dataparallel, distri
 
     if (net == "inception_v3"):
         inp = torch.randn(batch_size, 3, 299, 299, device="cuda")
+    elif net == 'ResNext101_32C_48d':
+        inp = torch.randn(batch_size, 3, 224, 224, device="cuda")
     else:
         inp = torch.randn(batch_size, 3, 224, 224, device="cuda")
     if (run_fp16):
@@ -111,7 +120,8 @@ def run_benchmarking(net, batch_size, iterations, run_fp16, dataparallel, distri
     if (run_fp16):
         param_copy = get_param_copy(network)
     optimizer = torch.optim.SGD(param_copy, lr = 0.01, momentum = 0.9)
-    summary(network, inp.shape[1:])
+    set_trace()
+    summary(network, input_size=tuple(inp.shape[1:]))
 
     ## warmup.
     print ("INFO: running forward and backward for warmup.")
@@ -177,19 +187,33 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--network", type=str, 
-        choices=['alexnet', 'vgg11', 'vgg13', 'vgg16', 'vgg19', 'vgg11_bn', 'vgg13_bn', 'vgg16_bn', 'vgg19_bn', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152', 'SqueezeNet', 'SqueezeNet1.1', 'densenet121', 'densenet169', 'densenet201', 'densenet161', 'inception_v3'],
-        required=True, help="Network to run.")
-    parser.add_argument("--batch-size" , type=int, required=False, default=64, help="Batch size (will be split among devices used by this invocation)")
-    parser.add_argument("--iterations", type=int, required=False, default=20, help="Iterations")
-    parser.add_argument("--fp16", type=int, required=False, default=0,help="FP16 mixed precision benchmarking")
-    parser.add_argument("--dataparallel", action='store_true', required=False, help="Use torch.nn.DataParallel api to run single process on multiple devices. Use only one of --dataparallel or --distributed_dataparallel")
-    parser.add_argument("--distributed_dataparallel", action='store_true', required=False, help="Use torch.nn.parallel.DistributedDataParallel api to run on multiple processes/nodes. The multiple processes need to be launched manually, this script will only launch ONE process per invocation. Use only one of --dataparallel or --distributed_dataparallel")
-    parser.add_argument("--device_ids", type=str, required=False, default=None, help="Comma-separated list (no spaces) to specify which HIP devices (0-indexed) to run dataparallel or distributedDataParallel api on. Might need to use HIP_VISIBLE_DEVICES to limit visiblity of devices to different processes.")
-    parser.add_argument("--rank", type=int, required=False, default=None, help="Rank of this process. Required for --distributed_dataparallel")
-    parser.add_argument("--world-size", type=int, required=False, default=None, help="Total number of ranks/processes. Required for --distributed_dataparallel")
-    parser.add_argument("--dist-backend", type=str, required=False, default=None, help="Backend used for distributed training. Can be one of 'nccl' or 'gloo'. Required for --distributed_dataparallel")
-    parser.add_argument("--dist-url", type=str, required=False, default=None, help="url used for rendezvous of processes in distributed training. Needs to contain IP and open port of master rank0 eg. 'tcp://172.23.2.1:54321'. Required for --distributed_dataparallel")
+    parser.add_argument("--network", type=str, default='ResNext101_32C_48d',
+        choices=['alexnet', 'vgg11', 'vgg13', 'vgg16', 'vgg19', 'vgg11_bn',
+                 'vgg13_bn', 'vgg16_bn', 'vgg19_bn', 'resnet18', 'resnet34',
+                 'resnet50', 'resnet101', 'resnet152', 'SqueezeNet', 'SqueezeNet1.1',
+                 'densenet121', 'densenet169', 'densenet201', 'densenet161',
+                 'inception_v3', 'ResNext101_32C_48d'],
+                help="Network to run.")
+    parser.add_argument("--batch-size" , type=int, required=False, default=64,
+                        help="Batch size (will be split among devices used by this invocation)")
+    parser.add_argument("--iterations", type=int, required=False, default=20,
+                        help="Iterations")
+    parser.add_argument("--fp16", type=int, required=False, default=0,
+                        help="FP16 mixed precision benchmarking")
+    parser.add_argument("--dataparallel", action='store_true', required=False,
+                        help="Use torch.nn.DataParallel api to run single process on multiple devices. Use only one of --dataparallel or --distributed_dataparallel")
+    parser.add_argument("--distributed_dataparallel", action='store_true', required=False,
+                        help="Use torch.nn.parallel.DistributedDataParallel api to run on multiple processes/nodes. The multiple processes need to be launched manually, this script will only launch ONE process per invocation. Use only one of --dataparallel or --distributed_dataparallel")
+    parser.add_argument("--device_ids", type=str, required=False, default=None,
+                        help="Comma-separated list (no spaces) to specify which HIP devices (0-indexed) to run dataparallel or distributedDataParallel api on. Might need to use HIP_VISIBLE_DEVICES to limit visiblity of devices to different processes.")
+    parser.add_argument("--rank", type=int, required=False, default=None,
+                        help="Rank of this process. Required for --distributed_dataparallel")
+    parser.add_argument("--world-size", type=int, required=False, default=None,
+                        help="Total number of ranks/processes. Required for --distributed_dataparallel")
+    parser.add_argument("--dist-backend", type=str, required=False, default=None,
+                        help="Backend used for distributed training. Can be one of 'nccl' or 'gloo'. Required for --distributed_dataparallel")
+    parser.add_argument("--dist-url", type=str, required=False, default=None,
+                        help="url used for rendezvous of processes in distributed training. Needs to contain IP and open port of master rank0 eg. 'tcp://172.23.2.1:54321'. Required for --distributed_dataparallel")
 
     args = parser.parse_args()
 
