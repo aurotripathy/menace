@@ -120,8 +120,6 @@ def run_benchmarking(net, batch_size, iterations, run_fp16, dataparallel, distri
     if (run_fp16):
         param_copy = get_param_copy(network)
     optimizer = torch.optim.SGD(param_copy, lr = 0.01, momentum = 0.9)
-    set_trace()
-    summary(network, input_size=tuple(inp.shape[1:]))
 
     ## warmup.
     print ("INFO: running forward and backward for warmup.")
