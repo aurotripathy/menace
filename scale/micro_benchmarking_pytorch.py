@@ -68,6 +68,12 @@ def get_network(net):
         return torchvision.models.vgg19_bn().to(device="cuda")
     elif (net == "ResNext101_32C_48d"):
         return torch.hub.load('facebookresearch/WSL-Images', 'resnext101_32x48d_wsl').to(device='cuda')
+    elif (net == "resnext101_32x8d"):
+        return torch.hub.load('facebookresearch/WSL-Images', 'resnext101_32x8d_wsl').to(device='cuda')
+    elif (net == "ResNext101_32C_16d"):
+        return torch.hub.load('facebookresearch/WSL-Images', 'resnext101_32x16d_wsl').to(device='cuda')
+    elif (net == "ResNext101_32C_32d"):
+        return torch.hub.load('facebookresearch/WSL-Images', 'resnext101_32x32d_wsl').to(device='cuda')
 
     else:
         print ("ERROR: not a supported model.")
@@ -188,7 +194,7 @@ if __name__ == '__main__':
                  'vgg13_bn', 'vgg16_bn', 'vgg19_bn', 'resnet18', 'resnet34',
                  'resnet50', 'resnet101', 'resnet152', 'SqueezeNet', 'SqueezeNet1.1',
                  'densenet121', 'densenet169', 'densenet201', 'densenet161',
-                 'inception_v3', 'ResNext101_32C_48d'],
+                 'inception_v3', 'ResNext101_32C_48d', 'ResNext101_32C_8d', 'ResNext101_32C_16d', 'ResNext101_32C_32d'],
                 help="Network to run.")
     parser.add_argument("--batch-size" , type=int, required=False, default=64,
                         help="Batch size (will be split among devices used by this invocation)")
