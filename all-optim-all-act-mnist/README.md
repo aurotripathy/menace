@@ -1,3 +1,12 @@
+Runs all combinations of specified activations with specified optimizers.
+Network is Lenet5, dataset is mnist.
+```
+activation_strs = ['ReLU', 'Sigmoid', 'Tanh', 'ELU', 'LeakyReLU']
+optimizer_strs = ['RMSprop', 'SGD', 'Adam']
+```
+
+List above is by no means complete but a start.
+
 The hyperparamters don't work for this case (optimizer SGD and activation Sigmoid).
 
 
