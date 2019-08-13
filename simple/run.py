@@ -1,6 +1,5 @@
 """
-Runs all combinations of specified flavors of activation 
-with specified flavors of optimizer.
+Runs all combinations of specified activations with specified optimizers.
 Network is Lenet5, dataset is mnist
 """
 
@@ -40,7 +39,7 @@ def train(epoch, net, optimizer):
 
         images = images.to(device)
         labels = labels.to(device)
-        
+
         output = net(images)
 
         loss = criterion(output, labels)
@@ -48,18 +47,19 @@ def train(epoch, net, optimizer):
         loss_list.append(loss.detach().cuda().item())
         batch_list.append(i+1)
 
-        if i % 10 == 0:
-            print('Train - Epoch %d, Batch: %d, Loss: %f' % (epoch, i, loss.detach().cuda().item()))
+        # if i % 10 == 0:
+        #     print('Train - Epoch %d, Batch: %d, Loss: %f' % (epoch, i,
+        #                                                      loss.detach().cuda().item()))
 
         loss.backward()
         optimizer.step()
 
 
-def test(net):
+def test(epoch, net):
     net.eval()
     total_correct = 0
     avg_loss = 0.0
-    for i, (images, labels) in enumerate(data_test_loader):
+    for _, (images, labels) in enumerate(data_test_loader):
         images = images.to(device)
         labels = labels.to(device)
         output = net(images)
@@ -68,13 +68,14 @@ def test(net):
         total_correct += pred.eq(labels.view_as(pred)).sum()
 
     avg_loss /= len(data_test)
-    print('Test Avg. Loss: %f, Accuracy: %f' % (avg_loss.detach().cpu().item(), float(total_correct) / len(data_test)))
+    print('Epoch %d, Avg. Test Loss: %f, Accuracy: %f' % (epoch, avg_loss.detach().cuda().item(),
+                                                          float(total_correct) / len(data_test)))
 
 
 def train_and_test(epoch, net, optimizer):
 
     train(epoch, net, optimizer)
-    test(net)
+    test(epoch, net)
 
 nb_epochs = 10
 def main(optimizer_str, activation_str):
@@ -90,9 +91,6 @@ def main(optimizer_str, activation_str):
         optimizer = optim.SGD(net.parameters(), lr=2e-3, momentum=0.9)
     set_trace()
     
-    # optimizer_fn = getattr(optim, optimizer_str)
-    # optimizer = optimizer_fn(net.parameters(), lr=2e-3)
-
     for epoch in range(1, nb_epochs + 1):
         train_and_test(epoch, net, optimizer)
 
@@ -101,6 +99,6 @@ if __name__ == '__main__':
     optimizer_strs = ['SGD', 'Adam']
     for activation_str in activation_strs:
         for optimizer_str in optimizer_strs:
-            print('Currently training with optimizer {} and activation {}'.format(optimizer_str,activation_str))
+            print('...Training with optimizer, {} and activation, {}'.format(optimizer_str,activation_str))
             main(optimizer_str, activation_str)
     
