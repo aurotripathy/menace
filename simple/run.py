@@ -1,5 +1,6 @@
 """
-Tries every flavor of activation with every flavor of optimizer  
+Runs all combinations of specified flavors of activation 
+with specified flavors of optimizer.
 Network is Lenet5, dataset is mnist
 """
 
@@ -27,20 +28,11 @@ data_train_loader = DataLoader(data_train, batch_size=256, shuffle=True, num_wor
 data_test_loader = DataLoader(data_test, batch_size=1024, num_workers=8)
 
 
-cur_batch_win = None
-cur_batch_win_opts = {
-    'title': 'Epoch Loss Trace',
-    'xlabel': 'Batch Number',
-    'ylabel': 'Loss',
-    'width': 1200,
-    'height': 600,
-}
-
 criterion = nn.CrossEntropyLoss()  # keeping this a constant and varying the activations and optims
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def train(epoch, net, optimizer):
-    global cur_batch_win
+
     net.train()
     loss_list, batch_list = [], []
     for i, (images, labels) in enumerate(data_train_loader):
@@ -53,17 +45,17 @@ def train(epoch, net, optimizer):
 
         loss = criterion(output, labels)
 
-        loss_list.append(loss.detach().cpu().item())
+        loss_list.append(loss.detach().cuda().item())
         batch_list.append(i+1)
 
         if i % 10 == 0:
-            print('Train - Epoch %d, Batch: %d, Loss: %f' % (epoch, i, loss.detach().cpu().item()))
+            print('Train - Epoch %d, Batch: %d, Loss: %f' % (epoch, i, loss.detach().cuda().item()))
 
         loss.backward()
         optimizer.step()
 
 
-def test(net, optimizer):
+def test(net):
     net.eval()
     total_correct = 0
     avg_loss = 0.0
@@ -79,25 +71,36 @@ def test(net, optimizer):
     print('Test Avg. Loss: %f, Accuracy: %f' % (avg_loss.detach().cpu().item(), float(total_correct) / len(data_test)))
 
 
-def train_and_test(epoch, net, optimizer_str, activation):
-    optimizer_fn = getattr(optim, optimizer_str)
-    set_trace()
-    # optimizer = optimizer_fn(net.parameters(), lr=2e-3)
-    optimizer = optim.Adam(net.parameters(), lr=2e-3)
+def train_and_test(epoch, net, optimizer):
+
     train(epoch, net, optimizer)
-    test(net, optimizer)
+    test(net)
 
-nb_epochs = 3
-def main(optimizer, activation):
-    net = LeNet5(activation).cuda()
+nb_epochs = 10
+def main(optimizer_str, activation_str):
+    net = LeNet5(activation_str).cuda()
+
+    if optimizer_str == 'SGD' and activation_str == 'Sigmoid':
+        optimizer = optim.SGD(net.parameters(), lr=0.01)
+    if optimizer_str == 'Adam' and activation_str == 'Sigmoid':
+        optimizer = optim.Adam(net.parameters(), lr=0.01)
+    elif optimizer_str == 'Adam':
+        optimizer = optim.Adam(net.parameters(), lr=2e-3)
+    elif optimizer_str == 'SGD':
+        optimizer = optim.SGD(net.parameters(), lr=2e-3, momentum=0.9)
+    set_trace()
+    
+    # optimizer_fn = getattr(optim, optimizer_str)
+    # optimizer = optimizer_fn(net.parameters(), lr=2e-3)
+
     for epoch in range(1, nb_epochs + 1):
-        train_and_test(epoch, net, optimizer, activation)
+        train_and_test(epoch, net, optimizer)
 
-activations = ['ReLU', 'Sigmoid', 'Tanh', 'ELU', 'LeakyReLU']
-optimizers = ['Adam', 'SGD']
 if __name__ == '__main__':
-    for activation in activations:
-        for optimizer in optimizers:
-            print('Currently training with optimizer {} and activation {}'.format(optimizer,activation))
-            main(optimizer, activation)
+    activation_strs = ['ReLU', 'Sigmoid', 'Tanh', 'ELU', 'LeakyReLU']
+    optimizer_strs = ['SGD', 'Adam']
+    for activation_str in activation_strs:
+        for optimizer_str in optimizer_strs:
+            print('Currently training with optimizer {} and activation {}'.format(optimizer_str,activation_str))
+            main(optimizer_str, activation_str)
     
