@@ -78,7 +78,7 @@ def train_and_test(epoch, net, optimizer):
     test(epoch, net)
 
 nb_epochs = 10
-def main(optimizer_str, activation_str):
+def setup_run(optimizer_str, activation_str):
     net = LeNet5(activation_str).cuda()
 
     if optimizer_str == 'SGD' and activation_str == 'Sigmoid':
@@ -106,5 +106,5 @@ if __name__ == '__main__':
     for activation_str in activation_strs:
         for optimizer_str in optimizer_strs:
             print('...Training with optimizer, {} and activation, {}'.format(optimizer_str,activation_str))
-            main(optimizer_str, activation_str)
+            setup_run(optimizer_str, activation_str)
     
