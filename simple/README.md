@@ -1,7 +1,7 @@
 The hyperparamters don't work for this case.
 
-<code>
 
+```
 ...Training with optimizer, SGD and activation, Sigmoid
 Epoch 1, Avg. Test Loss: 0.002301, Accuracy: 0.113500
 Epoch 2, Avg. Test Loss: 0.002301, Accuracy: 0.113500
@@ -13,5 +13,6 @@ Epoch 7, Avg. Test Loss: 0.002301, Accuracy: 0.113500
 Epoch 8, Avg. Test Loss: 0.002301, Accuracy: 0.113500
 Epoch 9, Avg. Test Loss: 0.002302, Accuracy: 0.113500
 Epoch 10, Avg. Test Loss: 0.002302, Accuracy: 0.113500
+  ```
 
-</code>
+
