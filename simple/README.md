@@ -1,4 +1,4 @@
-The hyperparamters don't work for this case.
+The hyperparamters don't work for this case (optimizer SGD and activation Sigmoid).
 
 
 ```
