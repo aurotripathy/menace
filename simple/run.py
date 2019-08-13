@@ -10,7 +10,7 @@ import torch.optim as optim
 from torchvision.datasets.mnist import MNIST
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from pudb import set_trace
+# from pudb import set_trace
 
 data_train = MNIST('./data/mnist',
                    download=True,
@@ -89,14 +89,20 @@ def main(optimizer_str, activation_str):
         optimizer = optim.Adam(net.parameters(), lr=2e-3)
     elif optimizer_str == 'SGD':
         optimizer = optim.SGD(net.parameters(), lr=2e-3, momentum=0.9)
-    set_trace()
+    elif optimizer_str == 'RMSprop':
+        optimizer = optim.RMSprop(net.parameters(), lr=2e-3, momentum=0.9)
+    else:
+        print("***Unknown optimizer")
+        exit(2)
+        
+    # set_trace()
     
     for epoch in range(1, nb_epochs + 1):
         train_and_test(epoch, net, optimizer)
 
 if __name__ == '__main__':
     activation_strs = ['ReLU', 'Sigmoid', 'Tanh', 'ELU', 'LeakyReLU']
-    optimizer_strs = ['SGD', 'Adam']
+    optimizer_strs = ['RMSprop', 'SGD', 'Adam']
     for activation_str in activation_strs:
         for optimizer_str in optimizer_strs:
             print('...Training with optimizer, {} and activation, {}'.format(optimizer_str,activation_str))
