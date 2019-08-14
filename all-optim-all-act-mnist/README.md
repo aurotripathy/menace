@@ -10,7 +10,7 @@ optimizer_strs = ['RMSprop', 'SGD', 'Adam']
 
 List above is by no means complete but a start.
 
-The hyperparamters don't work for this case (optimizer SGD and activation Sigmoid).
+The hyperparameters don't work when the optimizer is SGD and the activation is Sigmoid. To be debugged.
 
 
 ```
