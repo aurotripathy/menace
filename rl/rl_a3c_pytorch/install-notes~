@@ -1,0 +1,6 @@
+pip3 install gym
+pip3 install opencv-python
+pip3 install setproctitle
+pip3 install gym[atari]
+
+				 
