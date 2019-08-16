@@ -15,8 +15,9 @@ def pick_time(str):
     time = str.split(' ')
     return time[3] + '.' + time[4]
 
-df = pd.read_csv('trunc-MsPacman-v0_log',
+df = pd.read_csv('MsPacman-v0_log',
                  delimiter=',',
+                 skiprows=19,
                  names=['time_1', 'time_2', 'episode reward', 'episode len', 'reward mean'],
                  error_bad_lines=False)
 df.reset_index(level=0, inplace=True)  # go to 0,1,... indexing
@@ -31,9 +32,10 @@ for mean_reward, time_str in zip(mean_rewards, time_strs):
 x = np.arange(len(time_strs))
 my_xticks = time_strs
 my_xticks = [my_xticks[i] if i%10==0 else ' ' for i,x in enumerate(my_xticks)]
+plt.title('Avg. Reward over Time')
 plt.ylabel('Avg. reward')
 plt.xticks(x, my_xticks, rotation='vertical')
 plt.plot(x, mean_rewards)
 
+plt.savefig('reward-over-time.png', bbox_inches='tight')
 plt.show()
-plt.savefig('reward-over-time.png')
