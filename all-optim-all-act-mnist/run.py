@@ -16,43 +16,41 @@ data_train = MNIST('./data/mnist',
                    download=True,
                    transform=transforms.Compose([
                        transforms.Resize((32, 32)),
-                       transforms.ToTensor()]))
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.1307,), (0.3081,))
+                   ]))
 data_test = MNIST('./data/mnist',
                   train=False,
                   download=True,
                   transform=transforms.Compose([
                       transforms.Resize((32, 32)),
-                      transforms.ToTensor()]))
+                      transforms.ToTensor(),
+                      transforms.Normalize((0.1307,), (0.3081,))
+                  ]))
 data_train_loader = DataLoader(data_train, batch_size=256, shuffle=True, num_workers=8)
 data_test_loader = DataLoader(data_test, batch_size=1024, num_workers=8)
 
 
-criterion = nn.CrossEntropyLoss()  # keeping this a constant and varying the activations and optims
+criterion = nn.CrossEntropyLoss()  # keep this constant and vary the activations and optims
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("Using device: ", device)
 
 def train(epoch, net, optimizer):
 
     net.train()
-    loss_list, batch_list = [], []
     for i, (images, labels) in enumerate(data_train_loader):
-        optimizer.zero_grad()
-
         images = images.to(device)
         labels = labels.to(device)
 
+        optimizer.zero_grad()
         output = net(images)
-
         loss = criterion(output, labels)
-
-        loss_list.append(loss.detach().cuda().item())
-        batch_list.append(i+1)
-
-        # if i % 10 == 0:
-        #     print('Train - Epoch %d, Batch: %d, Loss: %f' % (epoch, i,
-        #                                                      loss.detach().cuda().item()))
-
         loss.backward()
         optimizer.step()
+
+        if i % 10 == 0:
+            print('Train - Epoch %d, Batch: %d, Loss: %f' % (epoch, i,
+                                                             loss.detach().cuda().item()))
 
 
 def test(epoch, net):
@@ -82,8 +80,9 @@ def setup_run(optimizer_str, activation_str):
     net = LeNet5(activation_str).cuda()
 
     if optimizer_str == 'SGD' and activation_str == 'Sigmoid':
-        optimizer = optim.SGD(net.parameters(), lr=0.01)
-    if optimizer_str == 'Adam' and activation_str == 'Sigmoid':
+        optimizer = optim.SGD(net.parameters(), lr=0.001,
+                              momentum=0.9, nesterov=True)
+    elif optimizer_str == 'Adam' and activation_str == 'Sigmoid':
         optimizer = optim.Adam(net.parameters(), lr=0.01)
     elif optimizer_str == 'Adam':
         optimizer = optim.Adam(net.parameters(), lr=2e-3)
@@ -92,17 +91,15 @@ def setup_run(optimizer_str, activation_str):
     elif optimizer_str == 'RMSprop':
         optimizer = optim.RMSprop(net.parameters(), lr=2e-3, momentum=0.9)
     else:
-        print("***Unknown optimizer")
+        print("***Unknown optimizer:", optimizer_str)
         exit(2)
-        
-    # set_trace()
-    
+
     for epoch in range(1, nb_epochs + 1):
         train_and_test(epoch, net, optimizer)
 
 if __name__ == '__main__':
-    activation_strs = ['SiLU', 'GeLU', 'ReLU', 'Sigmoid', 'Tanh', 'ELU', 'LeakyReLU']
-    optimizer_strs = ['RMSprop', 'SGD', 'Adam']
+    activation_strs = ['Sigmoid', 'SiLU', 'GeLU', 'ReLU', 'Tanh', 'ELU', 'LeakyReLU']
+    optimizer_strs = ['SGD', 'RMSprop', 'Adam']
     for activation_str in activation_strs:
         for optimizer_str in optimizer_strs:
             print('...Training with optimizer, {} and activation, {}'.format(optimizer_str,activation_str))
