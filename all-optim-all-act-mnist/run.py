@@ -48,9 +48,9 @@ def train(epoch, net, optimizer):
         loss.backward()
         optimizer.step()
 
-        if i % 10 == 0:
-            print('Train - Epoch %d, Batch: %d, Loss: %f' % (epoch, i,
-                                                             loss.detach().cuda().item()))
+        # if i % 10 == 0:
+        #     print('Train - Epoch %d, Batch: %d, Loss: %f' % (epoch, i,
+        #                                                      loss.detach().cuda().item()))
 
 
 def test(epoch, net):
@@ -75,12 +75,12 @@ def train_and_test(epoch, net, optimizer):
     train(epoch, net, optimizer)
     test(epoch, net)
 
-nb_epochs = 10
+nb_epochs = 15
 def setup_run(optimizer_str, activation_str):
     net = LeNet5(activation_str).cuda()
 
     if optimizer_str == 'SGD' and activation_str == 'Sigmoid':
-        optimizer = optim.SGD(net.parameters(), lr=0.001,
+        optimizer = optim.SGD(net.parameters(), lr=0.01,  # different learning rate
                               momentum=0.9, nesterov=True)
     elif optimizer_str == 'Adam' and activation_str == 'Sigmoid':
         optimizer = optim.Adam(net.parameters(), lr=0.01)
@@ -104,4 +104,3 @@ if __name__ == '__main__':
         for optimizer_str in optimizer_strs:
             print('...Training with optimizer, {} and activation, {}'.format(optimizer_str,activation_str))
             setup_run(optimizer_str, activation_str)
-    
