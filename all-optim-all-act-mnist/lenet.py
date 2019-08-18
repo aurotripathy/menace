@@ -20,7 +20,7 @@ class LeNet5(nn.Module):
     def __init__(self, activation_str='ReLU'):
         super(LeNet5, self).__init__()
 
-        if activation_str == 'GeLU' or activation_str == 'SiLU':
+        if activation_str in ['GeLU', 'SiLU', 'SoftExponential']:
             activation_fn = getattr(custom_activations, activation_str)
         else:
             activation_fn = getattr(nn, activation_str)
