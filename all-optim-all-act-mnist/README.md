@@ -1,5 +1,5 @@
 Runs all combinations of specified activations with specified optimizers.
-Network is Lenet5, dataset is mnist.
+Network is Lenet-5 (like), dataset is mnist. See below for modifications.
 
 List so far:
 
