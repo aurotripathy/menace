@@ -15,7 +15,7 @@ Note
 The combination of SGD and Sigmoid would not converge without the use of batch normalization layers (after convolution and activation layers). So the newtwork ended up looking like this:
 
 Convolutional
-
+```python
         self.convnet = nn.Sequential(OrderedDict([
             ('c1', nn.Conv2d(1, 6, kernel_size=(5, 5))),
             ('activation1', activation_fn()),
@@ -26,7 +26,7 @@ Convolutional
             ('c5', nn.Conv2d(16, 120, kernel_size=(5, 5))),
             ('activation5', activation_fn())
         ]))
-
+```
 Fully Connected
 
         self.fc = nn.Sequential(OrderedDict([
