@@ -1,5 +1,5 @@
 Runs all combinations of specified activations with specified optimizers.
-Network is Lenet5, dataset is mnist.
+Network is Lenet-5 (like), dataset is mnist. See below for modifications.
 
 List so far:
 
@@ -15,7 +15,7 @@ Note
 The combination of SGD and Sigmoid would not converge without the use of batch normalization layers (after convolution and activation layers). So the newtwork ended up looking like this:
 
 Convolutional
-
+```python
         self.convnet = nn.Sequential(OrderedDict([
             ('c1', nn.Conv2d(1, 6, kernel_size=(5, 5))),
             ('activation1', activation_fn()),
@@ -26,8 +26,9 @@ Convolutional
             ('c5', nn.Conv2d(16, 120, kernel_size=(5, 5))),
             ('activation5', activation_fn())
         ]))
-
+```
 Fully Connected
+```python
 
         self.fc = nn.Sequential(OrderedDict([
             ('f6', nn.Linear(120, 84)),
@@ -35,3 +36,4 @@ Fully Connected
             ('f7', nn.Linear(84, 10)),
             ('sig7', nn.LogSoftmax(dim=-1))
         ]))
+```
