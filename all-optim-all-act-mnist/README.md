@@ -27,7 +27,7 @@ Convolutional
             ('activation5', activation_fn())
         ]))
 
-Connected
+Fully Connected
 
         self.fc = nn.Sequential(OrderedDict([
             ('f6', nn.Linear(120, 84)),
