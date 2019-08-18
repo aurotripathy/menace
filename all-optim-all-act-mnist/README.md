@@ -3,9 +3,10 @@ Network is Lenet-5 (like), dataset is mnist. See below for modifications.
 
 List so far:
 
-```
-activation_strs = ['ReLU', 'Sigmoid', 'Tanh', 'ELU', 'LeakyReLU']
-optimizer_strs = ['RMSprop', 'SGD', 'Adam']
+```python
+    activation_strs = ['SoftExponential', 'Sigmoid', 'SiLU', 'GeLU', 'ReLU', 'Tanh', 'ELU', 'LeakyReLU']
+    optimizer_strs = ['SGD', 'RMSprop', 'Adam']
+
 ```
 
 List above is by no means complete but a start.
