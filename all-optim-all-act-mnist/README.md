@@ -28,6 +28,7 @@ Convolutional
         ]))
 ```
 Fully Connected
+```python
 
         self.fc = nn.Sequential(OrderedDict([
             ('f6', nn.Linear(120, 84)),
@@ -35,3 +36,4 @@ Fully Connected
             ('f7', nn.Linear(84, 10)),
             ('sig7', nn.LogSoftmax(dim=-1))
         ]))
+```
