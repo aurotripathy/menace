@@ -98,7 +98,7 @@ def setup_run(optimizer_str, activation_str):
         train_and_test(epoch, net, optimizer)
 
 if __name__ == '__main__':
-    activation_strs = ['Sigmoid', 'SiLU', 'GeLU', 'ReLU', 'Tanh', 'ELU', 'LeakyReLU']
+    activation_strs = ['SoftExponential', 'Sigmoid', 'SiLU', 'GeLU', 'ReLU', 'Tanh', 'ELU', 'LeakyReLU']
     optimizer_strs = ['SGD', 'RMSprop', 'Adam']
     for activation_str in activation_strs:
         for optimizer_str in optimizer_strs:
