@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 
 class GeLU(nn.Module):
+    """ https://arxiv.org/pdf/1606.08415.pdf """
     def __init__(self):
         super(GeLU, self).__init__()
 
