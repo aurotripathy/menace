@@ -1,0 +1,1 @@
+nvprof --print-gpu-summary python run.py > profile/nvprof.txt
