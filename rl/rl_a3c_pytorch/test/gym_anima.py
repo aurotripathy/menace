@@ -10,6 +10,9 @@ import matplotlib.animation as animation
 import gym
 
 fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1, aspect=1)
+ax.set_title("Learning to play Pacman with RL", fontsize=20, verticalalignment='bottom')
+
 env = gym.make('MsPacman-v0')
 env.reset()
 im = plt.imshow(env.render(mode='rgb_array'), animated=True)
