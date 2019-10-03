@@ -89,7 +89,10 @@ def updatefig(*fargs):
         
     return im,
     
-fig = plt.figure()
+fig = plt.figure(figsize=(9, 9))
+ax = fig.add_subplot(1, 1, 1, aspect=1)
+ax.set_title("Reinforcement Learning Destroys Pacman", fontsize=20, verticalalignment='bottom')
+
 im = plt.imshow(env.render(mode='rgb_array'), animated=True)
         
 player.model.eval()
