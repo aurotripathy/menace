@@ -2,3 +2,4 @@ gym
 opencv-python
 setproctitle
 gym[atari]
+matplotlib
