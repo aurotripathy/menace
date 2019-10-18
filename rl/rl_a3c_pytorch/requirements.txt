@@ -3,3 +3,5 @@ opencv-python
 setproctitle
 gym[atari]
 matplotlib
+watchdog
+pandas
