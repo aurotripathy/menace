@@ -89,9 +89,13 @@ def updatefig(*fargs):
         
     return im,
     
-fig = plt.figure(figsize=(9, 9))
+fig = plt.figure(figsize=(7, 7), facecolor='black')
+fig.canvas.set_window_title('Reinforcement Learning')
 ax = fig.add_subplot(1, 1, 1, aspect=1)
-ax.set_title("Reinforcement Learning Destroys Pacman", fontsize=20, verticalalignment='bottom')
+# ax.set_title("RL Plays Pacman", fontsize=20, verticalalignment='bottom', color='r')
+ax.set_title("RL Plays Pacman", fontsize=30, color='r')
+plt.text(-2, 220, "Trained for 10 hours",
+         color='w', fontsize=18)
 
 im = plt.imshow(env.render(mode='rgb_array'), animated=True)
         
