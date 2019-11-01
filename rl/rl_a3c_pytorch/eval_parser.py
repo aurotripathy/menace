@@ -64,4 +64,10 @@ def get_eval_args():
         default=False,
         metavar='NGE',
         help='Create a gym evaluation for upload')
+    parser.add_argument(
+        '--train-time',
+        type=int,
+        default=10,
+        metavar='NGE',
+        help="Time it took to train the model, in minutes")
     return parser.parse_args()
