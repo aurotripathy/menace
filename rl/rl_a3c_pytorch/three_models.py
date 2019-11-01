@@ -1,26 +1,30 @@
 import subprocess
 import time
 
-cmd_start_list = "python3.6 gym-matplotlib-animated-eval.py \
+cmd = "python3.6 gym-matplotlib-animated-eval.py \
 --env MsPacman-v0 \
 --render True \
---train-time 50".split()
+--train-time 50 \
+--load-model-dir /dockerx/data/rl/trained_models/".split()
 
-print(cmd_start_list)
+print(cmd)
 
-# cmd_stop = "pkill python"
-
-train_list = [50, 100, 200]
-sleep_list = [10, 15, 20]
+train_times = [10, 100, 1000]
+sleep_times = [15, 20, 60]
+model_locations = ['/dockerx/data/rl/trained_models/',
+                   '/dockerx/data/rl/trained_models/',
+                   '/dockerx/data/rl/trained_models/',]
 while True:
-    for train_time, sleep_time in zip(train_list, sleep_list): 
+    for train_time, sleep_time, model_location in zip(train_times,
+                                      sleep_times, model_locations): 
         print("In Loop...")
-        cmd_start_list[-1] = str(train_time) # replace default
-        sub_p = subprocess.Popen(cmd_start_list)
+        cmd[-3] = str(train_time) # replace default
+        cmd[-1] = model_location
+        sub_p = subprocess.Popen(cmd)
         print("process pid:", sub_p.pid)
         print("Starting sleep")
         time.sleep(sleep_time)
         print("Done sleep")
         sub_p.kill()
 
-print("Done")
+
