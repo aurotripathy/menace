@@ -5,3 +5,4 @@ gym[atari]
 matplotlib
 watchdog
 pandas
+dateparser
