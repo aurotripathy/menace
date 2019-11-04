@@ -48,7 +48,7 @@ def refresh_graph(log_path):
 
     print('{}'.format([[t, s] for t, s in zip(time_axis[-10:], scores_axis[-10:])]))
     save_path = os.path.join(os.path.dirname(log_path), 'scores_plot.png')
-    display(time_axis[-300:], scores_axis[-300:], save_path)
+    display(time_axis[0:], scores_axis[0:], save_path)
 
 class MyHandler(FileSystemEventHandler):
     def on_modified(self, event):
