@@ -21,7 +21,7 @@ TIME_COL = 0
 ROWS_TO_SKIP = 19
 
 
-def load_graph(log_path):
+def load_graph(log_path, stride=20):
     time_axis = []
     scores_axis = []
     df = pd.read_csv(log_path, header=None,
@@ -33,7 +33,7 @@ def load_graph(log_path):
     start_time = dateparser.parse(df[TIME_COL][0])
     time_axis.append(0)
     
-    for time in range(1, len(df[0])):
+    for time in range(1, len(df[0]), stride):
         time_axis.append((dateparser.parse(df[TIME_COL][time]) -
                            start_time).total_seconds())
         scores_axis.append(float(df[SCORE_COL][time].split()[2]))
