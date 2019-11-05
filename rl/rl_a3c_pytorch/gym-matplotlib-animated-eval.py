@@ -54,6 +54,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+plt.rcParams['toolbar'] = 'None'
+
 def updatefig(*fargs):
     global num_tests
     global reward_total_sum
