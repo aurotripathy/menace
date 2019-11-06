@@ -35,7 +35,7 @@ def load_graph(log_path, stride=20):
     
     for time in range(1, len(df[0]), stride):
         time_axis.append((dateparser.parse(df[TIME_COL][time]) -
-                           start_time).total_seconds())
+                           start_time).total_seconds() // 60)
         scores_axis.append(float(df[SCORE_COL][time].split()[2]))
 
     return time_axis[0:], scores_axis[0:]
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
     line, = ax.plot(times, scores, color='r')
 
-    ax.set(xlabel='time (s)', ylabel='scores',
+    ax.set(xlabel='time (minutes)', ylabel='scores',
        title='Scores over time')
     ax.grid()
 
