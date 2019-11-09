@@ -4,6 +4,9 @@ import time
 from multiprocessing.connection import Listener
 from pudb import set_trace
 
+X_LIM = 100
+Y_LIM = 60
+
 def build_graph():
     import numpy as np
     l1_x = np.arange(0, 30)
@@ -26,12 +29,12 @@ plt.ion()
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.set_xlim([0,100])
-ax.set_ylim([0, 80])
+ax.set_xlim([0, X_LIM])
+ax.set_ylim([0, Y_LIM])
 plt.pause(0.001)
 
 x, y = build_graph()
-line1, = ax.plot(x[:30], y[:30], 'r-') # Returns a tuple of line objects, thus the comma
+line1, = ax.plot(x[:0], y[:0], 'r-') # Returns a tuple of line objects, thus the comma
 fig.canvas.draw()
 fig.canvas.flush_events()
 
@@ -41,14 +44,14 @@ i = 0
 while True:
     print('waiting for messages')
     i = i % 4
-    if seq[i] == 0:
+    if seq[i] == 0: #  starting point
         ax.clear()
     msg = conn.recv()
     print('got message ', msg)
-    if msg == 'close':
+    if msg == 'next':
         print('updating...', seq[i])
-        ax.set_xlim([0,100])
-        ax.set_ylim([0, 80])
+        ax.set_xlim([0, X_LIM])
+        ax.set_ylim([0, Y_LIM])
         line1, = ax.plot(x[:seq[i]], y[:seq[i]], 'r-') # Returns a tuple of line objects, thus the comma
         plt.pause(0.001)
         i += 1
