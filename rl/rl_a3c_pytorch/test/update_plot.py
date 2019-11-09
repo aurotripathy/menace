@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import time
+from multiprocessing.connection import Listener
 from pudb import set_trace
 
 def build_graph():
     import numpy as np
-    set_trace()
     l1_x = np.arange(0, 30)
     l1_y = l1_x
     l2_x = np.arange(30, 60)
@@ -17,6 +17,10 @@ def build_graph():
 
 
 
+address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
+listener = Listener(address, authkey=str.encode('sc19-visuals'))
+
+
 # You probably won't need this if you're embedding things in a tkinter plot...
 plt.ion()
 
@@ -24,22 +28,29 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.set_xlim([0,100])
 ax.set_ylim([0, 80])
+plt.pause(0.001)
 
 x, y = build_graph()
-line1, = ax.plot(x[:0], y[:0], 'r-') # Returns a tuple of line objects, thus the comma
-
-
+line1, = ax.plot(x[:30], y[:30], 'r-') # Returns a tuple of line objects, thus the comma
 fig.canvas.draw()
 fig.canvas.flush_events()
-# time.sleep(2)
+
+seq = [30, 60, 90, 0]
+conn = listener.accept()
+i = 0
 while True:
-    line1, = ax.plot(x[:30], y[:30], 'r-') # Returns a tuple of line objects, thus the comma
-    inp = input('something')
-    line1, = ax.plot(x[:60], y[:60], 'r-') # Returns a tuple of line objects, thus the comma
-    inp = input('something')
-    line1, = ax.plot(x[0:], y[0:], 'r-') # Returns a tuple of line objects, thus the comma
-    inp = input('something')
-    ax.clear()
-    ax.set_xlim([0,100])
-    ax.set_ylim([0, 80])
-    # line1, = ax.plot(x[:0], y[:0], 'r-') # Returns a tuple of line objects, thus the comma
+    print('waiting for messages')
+    i = i % 4
+    if seq[i] == 0:
+        ax.clear()
+    msg = conn.recv()
+    print('got message ', msg)
+    if msg == 'close':
+        print('updating...', seq[i])
+        ax.set_xlim([0,100])
+        ax.set_ylim([0, 80])
+        line1, = ax.plot(x[:seq[i]], y[:seq[i]], 'r-') # Returns a tuple of line objects, thus the comma
+        plt.pause(0.001)
+        i += 1
+
+
