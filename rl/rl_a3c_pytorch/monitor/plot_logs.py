@@ -88,7 +88,7 @@ if __name__ == "__main__":
     # First set up the figure, the axis, and the plot element we want to animate
     fig = plt.figure(facecolor='black')
     fig.canvas.set_window_title('RL TRAINING')
-    set_trace()
+    # set_trace()
 
     conn = listener.accept()
     i = 0
@@ -103,7 +103,7 @@ if __name__ == "__main__":
             print('updating...', i)
             ax.set_xlim([0, len(times_4)])
             ax.set_ylim([0, 3000])  # change
-            line1, = ax.plot(time_list[i], scores_list[i], 'r-') # Returns a tuple, thus the comma
+            line1, = ax.plot(times_list[i], scores_list[i], 'r-') # Returns a tuple, thus the comma
             plt.pause(0.001)
             i += 1
 
