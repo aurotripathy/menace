@@ -4,20 +4,15 @@ import time
 
 import pandas as pd
 import dateparser
-
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 import os
 
-import matplotlib.animation as animation
-from queue import Empty
 from multiprocessing import Queue, Process
 from multiprocessing.connection import Listener
 from pudb import set_trace
-from multiprocessing.connection import Listener
 
 SCORE_COL = 4
 TIME_COL = 0
@@ -81,8 +76,10 @@ if __name__ == "__main__":
     
     
     fig = plt.figure(facecolor='black')
+    plt.rcParams['toolbar'] = 'None' # Remove tool bar (upper bar)
     fig.canvas.set_window_title('RL TRAINING')
     ax = fig.add_subplot(111)
+    ax.set_facecolor("black")
     ax.set_xlim(0, X_LIM)
     ax.set_ylim(0, Y_LIM)  # change
     plt.pause(0.001)
