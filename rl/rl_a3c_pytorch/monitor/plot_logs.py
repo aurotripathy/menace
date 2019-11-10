@@ -24,9 +24,10 @@ TIME_COL = 0
 ROWS_TO_SKIP = 19
 
 # Globals
-stride = 20
+stride = 1
 marker = 0
-
+X_LIM = 700
+Y_LIM = 3300
         
 def load_graph(log_path):
     time_axis = []
@@ -81,8 +82,8 @@ if __name__ == "__main__":
     
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.set_xlim([0, len(times_4)])
-    ax.set_ylim([0, 3000])  # change
+    ax.set_xlim(0, X_LIM)
+    ax.set_ylim(0, Y_LIM)  # change
     plt.pause(0.001)
 
     # First set up the figure, the axis, and the plot element we want to animate
@@ -95,14 +96,15 @@ if __name__ == "__main__":
     while True:
         print('waiting for messages')
         i = i % 4
-        if i == 0: #  starting point
-            ax.clear()
+        # if i == 0: #  starting point
+        #     ax.clear()
+        ax.clear()
         msg = conn.recv()
         print('got message ', msg)
         if msg == 'next':
             print('updating...', i)
-            ax.set_xlim([0, len(times_4)])
-            ax.set_ylim([0, 3000])  # change
+            ax.set_xlim(0, X_LIM)
+            ax.set_ylim(0, Y_LIM)  # change
             line1, = ax.plot(times_list[i], scores_list[i], 'r-') # Returns a tuple, thus the comma
             plt.pause(0.001)
             i += 1
