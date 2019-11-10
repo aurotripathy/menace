@@ -10,7 +10,7 @@ from watchdog.events import FileSystemEventHandler
 
 import pandas as pd
 import dateparser
-from pudb import set_trace
+
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -38,7 +38,7 @@ def load_graph(log_path):
     df = pd.read_csv(log_path, header=None,
                      skiprows=ROWS_TO_SKIP)
     print('Read {} scores.'.format(len(df)))
-    # set_trace()
+
     
     scores_axis.append(float(df[SCORE_COL][0].split()[2]))
     start_time = dateparser.parse(df[TIME_COL][0])
@@ -84,8 +84,9 @@ if __name__ == "__main__":
     print('len=', len(times_2))
 
     # First set up the figure, the axis, and the plot element we want to animate
-    fig, ax = plt.subplots()
-    ax.set_xlim([0,600])
+    fig = plt.figure(facecolor='black')
+    fig.canvas.set_window_title('RL TRAINING')
+    ax.set_xlim([0,800])
     ax.set_ylim([60, 3500])
 
     times = times_1
