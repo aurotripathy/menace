@@ -63,11 +63,6 @@ if __name__ == "__main__":
     print('len=', len(times_3))
     times_list.append(times_3); scores_list.append(scores_3)
     
-    # times_4, scores_4 = load_graph('/dockerx/data/rl/logs-690/MsPacman-v0_log')
-    # print('len=', len(times_4))
-    # times_list.append(times_4); scores_list.append(scores_4)
-    
-    
     plt.rcParams['toolbar'] = 'None' # needs to done before instantiation
     plt.rc('axes',edgecolor='white')
     fig = plt.figure(facecolor='black')
@@ -80,6 +75,8 @@ if __name__ == "__main__":
     ax.yaxis.label.set_color('white')
     ax.set_xlabel('Time (minutes)')
     ax.set_ylabel('Scores')
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
     ax.grid(linestyle='-', linewidth='0.5', color='white')
     plt.pause(0.001)
 
@@ -99,6 +96,7 @@ if __name__ == "__main__":
             print('updating...', i)
             ax.set_xlim(0, X_LIM)
             ax.set_ylim(0, Y_LIM)  # change
+            ax.grid(linestyle='-', linewidth='0.5', color='white')
             line1, = ax.plot(times_list[i], scores_list[i], 'r-') # Returns a tuple, thus the comma
             plt.pause(0.001)
             i += 1
