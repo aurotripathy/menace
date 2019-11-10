@@ -9,7 +9,7 @@ print('connection accepted from', listener.last_accepted)
 while True:
     msg = conn.recv()
     # do something with msg
-    if msg == 'close':
+    if msg == 'next':
         print("Got message", msg)
         # conn.close()
         # break
