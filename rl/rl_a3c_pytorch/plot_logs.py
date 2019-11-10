@@ -44,18 +44,11 @@ def load_graph(log_path):
     return time_axis[0:], scores_axis[0:]
 
 
-def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--log-path" , type=str, required=False,
-                        help="Full path to the log-dir")
-    return parser.parse_args()
-
 if __name__ == "__main__":
 
     address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
     listener = Listener(address, authkey=str.encode('sc19-visuals'))
 
-    args = get_args()
     times_list = []; scores_list = []
     
     times_1, scores_1 = load_graph('/dockerx/data/rl/logs-53m/MsPacman-v0_log')
@@ -75,13 +68,19 @@ if __name__ == "__main__":
     # times_list.append(times_4); scores_list.append(scores_4)
     
     
+    plt.rcParams['toolbar'] = 'None' # needs to done before instantiation
+    plt.rc('axes',edgecolor='white')
     fig = plt.figure(facecolor='black')
-    plt.rcParams['toolbar'] = 'None' # Remove tool bar (upper bar)
     fig.canvas.set_window_title('RL TRAINING')
     ax = fig.add_subplot(111)
     ax.set_facecolor("black")
     ax.set_xlim(0, X_LIM)
     ax.set_ylim(0, Y_LIM)  # change
+    ax.xaxis.label.set_color('white')
+    ax.yaxis.label.set_color('white')
+    ax.set_xlabel('Time (minutes)')
+    ax.set_ylabel('Scores')
+    ax.grid(linestyle='-', linewidth='0.5', color='white')
     plt.pause(0.001)
 
     # set_trace()
