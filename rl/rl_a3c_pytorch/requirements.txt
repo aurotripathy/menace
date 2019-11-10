@@ -1,3 +1,4 @@
+pudb
 gym
 opencv-python
 setproctitle
