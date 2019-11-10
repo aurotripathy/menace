@@ -75,9 +75,9 @@ if __name__ == "__main__":
     print('len=', len(times_3))
     times_list.append(times_3); scores_list.append(scores_3)
     
-    times_4, scores_4 = load_graph('/dockerx/data/rl/logs-690/MsPacman-v0_log')
-    print('len=', len(times_4))
-    times_list.append(times_4); scores_list.append(scores_4)
+    # times_4, scores_4 = load_graph('/dockerx/data/rl/logs-690/MsPacman-v0_log')
+    # print('len=', len(times_4))
+    # times_list.append(times_4); scores_list.append(scores_4)
     
     
     fig = plt.figure(facecolor='black')
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     i = 0
     while True:
         print('waiting for messages')
-        i = i % 4
+        i = i % 3
         # if i == 0: #  starting point
         #     ax.clear()
         ax.clear()
