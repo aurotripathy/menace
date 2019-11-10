@@ -71,7 +71,7 @@ if __name__ == "__main__":
     print('len=', len(times_2))
     times_list.append(times_2); scores_list.append(scores_2)
 
-    times_3, scores_3 = load_graph('/dockerx/data/rl/logs-550/MsPacman-v0_log')
+    times_3, scores_3 = load_graph('/dockerx/data/rl/logs-550m/MsPacman-v0_log')
     print('len=', len(times_3))
     times_list.append(times_3); scores_list.append(scores_3)
     
