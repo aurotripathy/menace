@@ -9,11 +9,11 @@ cmd = "python3.6 gym-matplotlib-animated-eval.py \
 
 print(cmd)
 
-train_times = [50, 150, 530]
-sleep_times = [25, 25, 60]
+train_times = [53, 150, 550]
+sleep_times = [30, 30, 60]
 model_locations = ['/dockerx/data/rl/trained_models-53m/',
                    '/dockerx/data/rl/trained_models-150m/',
-                   '/dockerx/data/rl/trained_models/',]
+                   '/dockerx/data/rl/trained_models-550m/',]
 
 while True:
     for train_time, sleep_time, model_location in zip(train_times,
