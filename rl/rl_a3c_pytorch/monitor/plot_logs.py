@@ -26,8 +26,8 @@ ROWS_TO_SKIP = 19
 # Globals
 stride = 1
 marker = 0
-X_LIM = 700
-Y_LIM = 3300
+X_LIM = 750
+Y_LIM = 3500
         
 def load_graph(log_path):
     time_axis = []
@@ -80,15 +80,13 @@ if __name__ == "__main__":
     times_list.append(times_4); scores_list.append(scores_4)
     
     
-    fig = plt.figure()
+    fig = plt.figure(facecolor='black')
+    fig.canvas.set_window_title('RL TRAINING')
     ax = fig.add_subplot(111)
     ax.set_xlim(0, X_LIM)
     ax.set_ylim(0, Y_LIM)  # change
     plt.pause(0.001)
 
-    # First set up the figure, the axis, and the plot element we want to animate
-    fig = plt.figure(facecolor='black')
-    fig.canvas.set_window_title('RL TRAINING')
     # set_trace()
 
     conn = listener.accept()
