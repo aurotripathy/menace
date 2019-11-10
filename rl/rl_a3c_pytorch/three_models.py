@@ -1,4 +1,5 @@
 import subprocess
+from multiprocessing.connection import Client
 import time
 
 cmd = "python3.6 gym-matplotlib-animated-eval.py \
@@ -9,22 +10,26 @@ cmd = "python3.6 gym-matplotlib-animated-eval.py \
 
 print(cmd)
 
+address = ('localhost', 6000)
+conn = Client(address, authkey=str.encode('sc19-visuals'))
+
 train_times = [53, 150, 550]
-sleep_times = [30, 30, 60]
+play_times = [15, 30, 50]
 model_locations = ['/dockerx/data/rl/trained_models-53m/',
                    '/dockerx/data/rl/trained_models-150m/',
                    '/dockerx/data/rl/trained_models-550m/',]
 
 while True:
-    for train_time, sleep_time, model_location in zip(train_times,
-                                      sleep_times, model_locations): 
-        print("In Loop...")
+    for train_time, play_time, model_location in zip(train_times,
+                                      play_times, model_locations): 
+        conn.send('next')
+        print("Senr request to diplay...")
         cmd[-3] = str(train_time) # replace default
         cmd[-1] = model_location
         sub_p = subprocess.Popen(cmd)
         print("process pid:", sub_p.pid)
         print("Starting sleep")
-        time.sleep(sleep_time)
+        time.sleep(play_time)
         print("Done sleep")
         sub_p.kill()
 
