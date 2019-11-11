@@ -74,7 +74,7 @@ if __name__ == "__main__":
     
     plt.rcParams['toolbar'] = 'None' # needs to done before instantiation
     plt.rc('axes',edgecolor='white')
-    fig = plt.figure(figsize=(6, 6.25), facecolor='black')
+    fig = plt.figure(figsize=(6, 6.30), facecolor='black')
     fig.suptitle('Scores Over Time', fontsize=18, color='white')
     fig.canvas.set_window_title('RL TRAINING')
     ax = fig.add_subplot(111)
@@ -97,7 +97,8 @@ if __name__ == "__main__":
         if msg == 'next':
             print('updating...', i)
             refresh_window_dressing(ax, plt)
-            line1, = ax.plot(times_list[i], scores_list[i], 'r-', linewidth=3) # Returns a tuple, thus the comma
+            line, = ax.plot(times_list[i], scores_list[i], 'yellow', linewidth=3) # Returns a tuple, thus the comma
+            plt.plot(times_list[i][-1], scores_list[i][-1], marker='o', markersize=4, color="red")
             plt.pause(0.001)
             i += 1
 
