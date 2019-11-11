@@ -21,7 +21,7 @@ ROWS_TO_SKIP = 19
 # Globals
 stride = 1
 marker = 0
-X_LIM = 750
+X_LIM = 600
 Y_LIM = 3500
         
 def load_graph(log_path):
@@ -43,6 +43,15 @@ def load_graph(log_path):
 
     return time_axis[0:], scores_axis[0:]
 
+def refresh_window_dressing(ax, plt):
+    ax.set_xlim(0, X_LIM)
+    ax.set_ylim(0, Y_LIM)  # change
+    plt.xlabel('Training Time (minutes)\n100 cores + 8 GPUs', fontsize=16, color='white')
+    plt.ylabel('Scores', fontsize=16, color='white')
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+    ax.grid(linestyle='-', linewidth='0.5', color='white')
+    
 
 if __name__ == "__main__":
 
@@ -65,19 +74,12 @@ if __name__ == "__main__":
     
     plt.rcParams['toolbar'] = 'None' # needs to done before instantiation
     plt.rc('axes',edgecolor='white')
-    fig = plt.figure(facecolor='black')
+    fig = plt.figure(figsize=(6, 6.25), facecolor='black')
+    fig.suptitle('Scores Over Time', fontsize=18, color='white')
     fig.canvas.set_window_title('RL TRAINING')
     ax = fig.add_subplot(111)
     ax.set_facecolor("black")
-    ax.set_xlim(0, X_LIM)
-    ax.set_ylim(0, Y_LIM)  # change
-    ax.xaxis.label.set_color('white')
-    ax.yaxis.label.set_color('white')
-    ax.set_xlabel('Time (minutes)')
-    ax.set_ylabel('Scores')
-    ax.tick_params(axis='x', colors='white')
-    ax.tick_params(axis='y', colors='white')
-    ax.grid(linestyle='-', linewidth='0.5', color='white')
+    refresh_window_dressing(ax, plt)
     plt.pause(0.001)
 
     # set_trace()
@@ -94,10 +96,8 @@ if __name__ == "__main__":
         print('got message ', msg)
         if msg == 'next':
             print('updating...', i)
-            ax.set_xlim(0, X_LIM)
-            ax.set_ylim(0, Y_LIM)  # change
-            ax.grid(linestyle='-', linewidth='0.5', color='white')
-            line1, = ax.plot(times_list[i], scores_list[i], 'r-') # Returns a tuple, thus the comma
+            refresh_window_dressing(ax, plt)
+            line1, = ax.plot(times_list[i], scores_list[i], 'r-', linewidth=3) # Returns a tuple, thus the comma
             plt.pause(0.001)
             i += 1
 
