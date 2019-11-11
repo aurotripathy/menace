@@ -1,16 +1,23 @@
 import tkinter as tk
 from tkinter import font
+import subprocess
 
 from three_models import process_in_sequence
 
+cmd_play_all = "python3.6 three_models.py".split()
+
 root = tk.Tk()
 root.title('CONTROLS')
+
+INITIAL_SELECTION = 3
+current_selection = 3
+
 
 # helv20 = font.Font(family="Helvetica", size=20, weight="bold")
 helv20 = font.Font(family="Helvetica", size=20)
 
 v = tk.IntVar()
-v.set(3)  # initializing the choice, i.e. Python
+v.set(INITIAL_SELECTION)  
 
 options = [
     ("Play w/Model 1"),
@@ -20,9 +27,17 @@ options = [
 ]
 
 def process_choice():
-    print('You selected:', v.get())
-    if v.get() == 3:
-        process_in_sequence()
+    global current_selection
+    print('current selection {}, You selected: {}'.format(current_selection, v.get()))
+    if v.get() != current_selection:
+        if v.get() == 3:
+            sub_p = subprocess.Popen(cmd_play_all)
+            print("process pid:", sub_p.pid)
+            # process_in_sequence()
+    else:
+        print("No processing required!")
+    current_selection = v.get()
+
     
 tk.Label(root, font=helv20,
          text="""Choose Model:""",
@@ -33,7 +48,7 @@ for val, option in enumerate(options):
     tk.Radiobutton(root, 
             text=option,
             font=helv20,
-                   indicatoron = 0,  # indicator on, full txt in box
+            indicatoron = 0,  # indicator on, full txt in box
             width = 20,
             padx = 20, 
             variable=v, 
