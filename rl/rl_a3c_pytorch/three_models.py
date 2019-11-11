@@ -1,19 +1,20 @@
-import subprocess
-from multiprocessing.connection import Client
-import time
 
-cmd = "python3.6 gym-matplotlib-animated-eval.py \
---env MsPacman-v0 \
---render True \
---train-time 50 \
---load-model-dir /dockerx/data/rl/trained_models/".split()
-
-print(cmd)
-
-address = ('localhost', 6000)
-conn = Client(address, authkey=str.encode('sc19-visuals'))
 
 def process_in_sequence():
+    import subprocess
+    from multiprocessing.connection import Client
+    import time
+
+    cmd = "python3.6 gym-matplotlib-animated-eval.py \
+    --env MsPacman-v0 \
+    --render True \
+    --train-time 50 \
+    --load-model-dir /dockerx/data/rl/trained_models/".split()
+
+    print(cmd)
+
+    address = ('localhost', 6000)
+    conn = Client(address, authkey=str.encode('sc19-visuals'))
     train_times = [53, 150, 550]
     play_times = [15, 30, 50]
     model_locations = ['/dockerx/data/rl/trained_models-53m/',
