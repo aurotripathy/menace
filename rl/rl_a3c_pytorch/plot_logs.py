@@ -52,11 +52,14 @@ def refresh_window_dressing(ax, plt):
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
     ax.grid(linestyle='-', linewidth='0.5', color='white')
-    ax.figure.figimage(logo, 200, 100, alpha=.80, zorder=1)
+    ax.figure.figimage(radeon_logo, 350, 75, alpha=1, zorder=1)
+    ax.figure.figimage(epyc_logo, 100, 450, alpha=1, zorder=1)
     
 
 if __name__ == "__main__":
-    logo = image.imread('/dockerx/data/rl/logos/AMD.png')
+       
+    radeon_logo = image.imread('/dockerx/data/rl/logos/AMD_Radeon-white.png')
+    epyc_logo = image.imread('/dockerx/data/rl/logos/EPYC-blue-white.png')
     address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
     listener = Listener(address, authkey=str.encode('sc19-visuals'))
 
