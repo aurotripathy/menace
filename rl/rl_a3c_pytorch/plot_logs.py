@@ -52,7 +52,7 @@ def refresh_window_dressing(ax, plt):
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
     ax.grid(linestyle='-', linewidth='0.5', color='white')
-    ax.figure.figimage(radeon_logo, 350, 75, alpha=1, zorder=1)
+    ax.figure.figimage(radeon_logo, 365, 83, alpha=1, zorder=1)
     ax.figure.figimage(epyc_logo, 100, 450, alpha=1, zorder=1)
     
 
