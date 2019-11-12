@@ -58,8 +58,8 @@ def refresh_window_dressing(ax, plt):
 
 if __name__ == "__main__":
        
-    radeon_logo = image.imread('/dockerx/data/rl/logos/AMD_Radeon-white.png')
-    epyc_logo = image.imread('/dockerx/data/rl/logos/EPYC-blue-white.png')
+    radeon_logo = image.imread('logos/AMD_Radeon-white.png')
+    epyc_logo = image.imread('logos/EPYC-blue-white.png')
     address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
     listener = Listener(address, authkey=str.encode('sc19-visuals'))
 
