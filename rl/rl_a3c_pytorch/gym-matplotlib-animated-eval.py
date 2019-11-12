@@ -11,6 +11,7 @@ import gym
 import logging
 import time
 from credits import credits_str, infomercial_str
+import matplotlib.image as image
 
 gpu_id = -1
 args = get_eval_args()
@@ -110,6 +111,8 @@ plt.text(-5, 237, infomercial_str,
 plt.text(-22, 257, credits_str,
          color='w', fontsize=8)
 
+rocm_logo = image.imread('logos/ROCm_Logo_128.png')
+ax.figure.figimage(rocm_logo, 10, 900, alpha=1, zorder=1)
 
 im = plt.imshow(env.render(mode='rgb_array'), animated=True)
         
