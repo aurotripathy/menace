@@ -10,6 +10,7 @@ from player_util import Agent
 import gym
 import logging
 import time
+from credits import credits_str, infomercial_str
 
 gpu_id = -1
 args = get_eval_args()
@@ -91,7 +92,7 @@ def updatefig(*fargs):
         
     return im,
     
-fig = plt.figure(figsize=(7, 9), facecolor='black')
+fig = plt.figure(figsize=(7.1, 10.4), facecolor='black')
 fig.canvas.set_window_title('Reinforcement Learning')
 ax = fig.add_subplot(1, 1, 1, aspect=1)
 # ax.set_title("PyTorch Plays Pacman", fontsize=20, verticalalignment='bottom', color='r')
@@ -102,9 +103,13 @@ plt.text(-5, 218, footer_text,
 checkpoint_time = '{} minute mark'.format(args.train_time)
 plt.text(65, 218, checkpoint_time,
          color='r', fontsize=20)
-infomercial = 'Trained on 100 AMD EPYC$^{TM}$ cores and \n\t\t8 AMD Radeon Instinct$^{TM}$ MI50 GPUs'
-plt.text(-5, 237, infomercial,
+
+plt.text(-5, 237, infomercial_str,
          color='w', fontsize=16)
+
+plt.text(-22, 257, credits_str,
+         color='w', fontsize=8)
+
 
 im = plt.imshow(env.render(mode='rgb_array'), animated=True)
         
