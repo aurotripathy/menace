@@ -10,7 +10,7 @@ root = tk.Tk()
 root.title('CONTROLS')
 
 INITIAL_SELECTION = 3
-current_selection = 3
+current_selection = None
 
 
 # helv20 = font.Font(family="Helvetica", size=20, weight="bold")
@@ -20,10 +20,10 @@ v = tk.IntVar()
 v.set(INITIAL_SELECTION)  
 
 options = [
-    ("Play w/Model 1"),
-    ("Play w/Model 2"),
-    ("Play w/Model 3"),
-    ("AutoPlay All Models"),
+    ("50 min Checkpoint"),
+    ("150 min Checkpoint"),
+    ("550 min Checkpoint"),
+    ("AutoPlay Checkpoints"),
 ]
 
 def process_choice():
