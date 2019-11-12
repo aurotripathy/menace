@@ -115,9 +115,9 @@ rocm_logo = image.imread('logos/ROCm_Logo_128.png')
 epyc_logo = image.imread('logos/EPYC-blue-white.png')
 radeon_logo = image.imread('logos/AMD_Radeon-white.png')
 
-ax.figure.figimage(rocm_logo, 10, 900, alpha=1, zorder=1)
-ax.figure.figimage(radeon_logo, 200, 83, alpha=1, zorder=1)
-ax.figure.figimage(epyc_logo, 500, 450, alpha=1, zorder=1)
+ax.figure.figimage(rocm_logo, 90, 900, alpha=1, zorder=1)
+ax.figure.figimage(radeon_logo, 280, 935, alpha=1, zorder=1)
+ax.figure.figimage(epyc_logo, 500, 925, alpha=1, zorder=1)
 
 im = plt.imshow(env.render(mode='rgb_array'), animated=True)
         
