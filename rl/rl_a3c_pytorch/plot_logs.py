@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# branding from https://ramiro.org/notebook/matplotlib-branding/
 import time
 
 import pandas as pd
@@ -12,6 +12,7 @@ import os
 
 from multiprocessing import Queue, Process
 from multiprocessing.connection import Listener
+import matplotlib.image as image
 from pudb import set_trace
 
 SCORE_COL = 4
@@ -51,10 +52,11 @@ def refresh_window_dressing(ax, plt):
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
     ax.grid(linestyle='-', linewidth='0.5', color='white')
+    ax.figure.figimage(logo, 200, 100, alpha=.80, zorder=1)
     
 
 if __name__ == "__main__":
-
+    logo = image.imread('/dockerx/data/rl/logos/AMD.png')
     address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
     listener = Listener(address, authkey=str.encode('sc19-visuals'))
 
