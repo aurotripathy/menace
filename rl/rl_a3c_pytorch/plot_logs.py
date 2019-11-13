@@ -13,6 +13,7 @@ import os
 from multiprocessing import Queue, Process
 from multiprocessing.connection import Listener
 import matplotlib.image as image
+from plot_utils import place_figure
 from pudb import set_trace
 
 SCORE_COL = 4
@@ -80,6 +81,7 @@ if __name__ == "__main__":
     plt.rcParams['toolbar'] = 'None' # needs to done before instantiation
     plt.rc('axes',edgecolor='white')
     fig = plt.figure(figsize=(7, 7), facecolor='black')
+    place_figure(fig, 10, 10)
     fig.suptitle('Scores Over Time', fontsize=18, color='white')
     fig.canvas.set_window_title('RL TRAINING')
     ax = fig.add_subplot(111)
