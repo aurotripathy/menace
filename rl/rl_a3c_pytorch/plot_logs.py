@@ -47,7 +47,7 @@ def load_graph(log_path):
 def refresh_window_dressing(ax, plt):
     ax.set_xlim(0, X_LIM)
     ax.set_ylim(0, Y_LIM)  # change
-    plt.xlabel('Training Time (minutes)\n100 cores + 8 GPUs', fontsize=16, color='white')
+    plt.xlabel('Training Time (Min)\n2X AMD EPYC$^{TM}$ + 8X Radeon Instinct$^{TM}$ MI50 GPUs', fontsize=16, color='white')
     plt.ylabel('Scores', fontsize=16, color='white')
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     
     plt.rcParams['toolbar'] = 'None' # needs to done before instantiation
     plt.rc('axes',edgecolor='white')
-    fig = plt.figure(figsize=(6, 6.30), facecolor='black')
+    fig = plt.figure(figsize=(7, 7), facecolor='black')
     fig.suptitle('Scores Over Time', fontsize=18, color='white')
     fig.canvas.set_window_title('RL TRAINING')
     ax = fig.add_subplot(111)
