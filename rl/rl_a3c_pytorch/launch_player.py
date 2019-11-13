@@ -48,7 +48,7 @@ class LaunchPlayer():
         print("process pid:", self.running_process.pid)
 
 
-    def exit_player():
+    def exit_player(self):
         self.running_process.kill()
                 
 if __name__ == '__main__':
@@ -66,3 +66,6 @@ if __name__ == '__main__':
         player.play_checkpointed_model(args.control_option)
     else:
         print('Bad checkpoint number')
+    print('Done launchng!')
+    time.sleep(5)
+    player.exit_player()
