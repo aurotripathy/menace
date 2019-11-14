@@ -99,7 +99,11 @@ if __name__ == "__main__":
         # if i == 0: #  starting point
         #     ax.clear()
         ax.clear()
-        msg = conn.recv()
+        try:
+            msg = conn.recv()
+        except EOFError:
+            print('Got EOFError exiting')
+            exit(1)
         print('got message ', msg)
         if msg == 'next':
             print('updating...', i)
