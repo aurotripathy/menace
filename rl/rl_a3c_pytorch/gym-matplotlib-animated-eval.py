@@ -12,6 +12,7 @@ import logging
 import time
 from credits import credits_str, infomercial_str
 import matplotlib.image as image
+from plot_utils import place_figure
 
 gpu_id = -1
 args = get_eval_args()
@@ -94,6 +95,7 @@ def updatefig(*fargs):
     return im,
     
 fig = plt.figure(figsize=(7.1, 10.4), facecolor='black')
+place_figure(fig, 1200, 10)
 fig.canvas.set_window_title('Reinforcement Learning')
 ax = fig.add_subplot(1, 1, 1, aspect=1)
 # ax.set_title("PyTorch Plays Pacman", fontsize=20, verticalalignment='bottom', color='r')
