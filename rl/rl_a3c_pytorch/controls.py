@@ -2,8 +2,10 @@ import tkinter as tk
 from tkinter import font
 import subprocess
 import psutil
+import time
 
-cmd_template = "python3.6 launch_player.py --control-option xx".split()
+play_template = "python3.6 launch_player.py --control-option xx".split()
+plot_cmd = "python3.6 plot_logs.py".split()
 
 root = tk.Tk()
 root.title('CONTROLS')
@@ -48,12 +50,14 @@ def process_choice():
     if v.get() != current_selection:
         clean_up()
         if v.get() == 3:
-            cmd_template[-1] = '3'
-            sub_p = subprocess.Popen(cmd_template)
+            plot_process = subprocess.Popen(plot_cmd)
+            time.sleep(1)
+            play_template[-1] = '3'
+            sub_p = subprocess.Popen(play_template)
             print("process pid:", sub_p.pid)
         elif v.get() in [0, 1, 2]:
-            cmd_template[-1] = str(v.get())
-            sub_p = subprocess.Popen(cmd_template)
+            play_template[-1] = str(v.get())
+            sub_p = subprocess.Popen(play_template)
 
     else:
         print("No processing required!")
