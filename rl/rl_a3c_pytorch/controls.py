@@ -3,12 +3,15 @@ from tkinter import font
 import subprocess
 import psutil
 import time
+from PIL import Image, ImageTk
+
 
 play_template = "python3.6 launch_player.py --control-option xx".split()
 plot_cmd = "python3.6 plot_logs.py".split()
 
 root = tk.Tk()
 root.title('CONTROLS')
+frame = tk.Frame(root)
 
 INITIAL_SELECTION = 3
 current_selection = None
@@ -63,10 +66,17 @@ def process_choice():
         print("No processing required!")
     current_selection = v.get()
 
-    
+IMAGE_LOC = "./logos/PyTorch_sw_stack_3.png"
+photo = Image.open(IMAGE_LOC)
+photo = ImageTk.PhotoImage(photo)
+
+tk.Label(root, font=helv20,
+         image=photo,
+         justify = tk.CENTER,
+         padx = 20).pack()
 tk.Label(root, font=helv20,
          text="""Choose Model:""",
-         justify = tk.LEFT,
+         justify = tk.CENTER,
          padx = 20).pack()
 
 for val, option in enumerate(options):
@@ -74,8 +84,9 @@ for val, option in enumerate(options):
             text=option,
             font=helv20,
             indicatoron = 0,  # indicator on, full txt in box
-            width = 20,
-            padx = 20, 
+            width = 26,
+            padx = 20,
+            justify = tk.CENTER,
             variable=v, 
             command=process_choice,
             value=val).pack(anchor=tk.W)
