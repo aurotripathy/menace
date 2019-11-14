@@ -66,6 +66,4 @@ if __name__ == '__main__':
         player.play_checkpointed_model(args.control_option)
     else:
         print('Bad checkpoint number')
-    print('Done launchng!')
-    time.sleep(5)
-    player.exit_player()
+
