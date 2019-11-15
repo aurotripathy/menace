@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 
 play_template = "python3.6 launch_player.py --control-option xx".split()
 plot_cmd = "python3.6 plot_logs.py".split()
+slide_show_cmd = "python3.6 slideshow.py".split()
 
 root = tk.Tk()
 root.title('CONTROLS')
@@ -17,7 +18,6 @@ INITIAL_SELECTION = 3
 current_selection = None
 sub_p = None
 
-# helv20 = font.Font(family="Helvetica", size=20, weight="bold")
 helv20 = font.Font(family="Helvetica", size=20)
 
 v = tk.IntVar()
@@ -44,6 +44,12 @@ def clean_up():
             print('Found Process launch_player.py. Terminating it.')
             process.terminate()
             break
+    for process in psutil.process_iter():
+        app_with_params = process.cmdline()
+        if app_with_params[:2] == ['python3.6', 'slideshow.py']:
+            print('Found Process slideshow.py. Terminating it.')
+            process.terminate()
+            break
 
 
 def process_choice():
@@ -59,6 +65,7 @@ def process_choice():
             sub_p = subprocess.Popen(play_template)
             print("process pid:", sub_p.pid)
         elif v.get() in [0, 1, 2]:
+            slide_show_p = subprocess.Popen(slide_show_cmd)
             play_template[-1] = str(v.get())
             sub_p = subprocess.Popen(play_template)
 
