@@ -36,12 +36,12 @@ class App(tk.Tk):
     def run(self):
         self.mainloop()
 # set milliseconds time between slides
-delay = 10000  # 10 sec
+delay = 12000  # 12 sec
 # get a series of gif images you have in the working folder
 # or use full path, or set directory to where the images are
 image_files = [
-    './logos/ac3-v2.png',
     './logos/RL-model.png',
+    './logos/ac3-v2.png',
 ]
 # upper left corner coordinates of app window
 x = 10
