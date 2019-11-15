@@ -73,7 +73,7 @@ def process_choice():
         print("No processing required!")
     current_selection = v.get()
 
-IMAGE_LOC = "./logos/PyTorch_sw_stack_3.png"
+IMAGE_LOC = "./logos/PyTorch_sw_stack_5.png"
 photo = Image.open(IMAGE_LOC)
 photo = ImageTk.PhotoImage(photo)
 
